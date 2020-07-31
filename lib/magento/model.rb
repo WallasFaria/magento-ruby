@@ -38,6 +38,10 @@ module Magento
       def inflector
         @inflector ||= Dry::Inflector.new
       end
+
+      def request
+        @request ||= Request.new
+      end
     end
   end
 end

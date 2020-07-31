@@ -2,7 +2,7 @@ module Magento
   class Product < Model
     class << self
       def find_by_sku(sku)
-        product_hash = Request.get("products/#{sku}").parse
+        product_hash = request.get("products/#{sku}").parse
         mapHash Product, product_hash
       end
     end
