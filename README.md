@@ -3,7 +3,7 @@
 ## Install
 
 ```rb
-gem 'magento', '~> 0.0.1'
+gem 'magento', '~> 0.0.2'
 ```
 
 or
