@@ -24,7 +24,7 @@ Magento.token = 'MAGENTO_API_KEY'
 ### Get product details by sku
 
 ```rb
-Magento::Product.find_by_sky('sku-test')
+Magento::Product.find_by_sku('sku-test')
 ```
 
 # TODO
