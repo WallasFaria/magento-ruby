@@ -30,6 +30,28 @@ Magento.store = :default # optional, Default is :all
 Magento::Product.find_by_sku('sku-test')
 ```
 
+## Customer
+
+### Get customer by id
+```rb
+Magento::Customer.find_by_id(id)
+```
+
+### Get customer by token
+```rb
+Magento::Customer.find_by_token('user_token')
+```
+
+## Countries
+
+### Get available regions for a country
+
+```rb
+country = Magento::Country.find('BR')
+
+country.available_regions
+```
+
 # TODO
 ### Get product list
 
@@ -53,23 +75,6 @@ Magento::Product.all(price_gt: 100, page: 2)
 ### Search products
 ```rb
 Magento::Product.search('tshort')
-```
-
-## Customer
-
-### Get current customer
-```rb
-Magento.token = 'CUSTOMER_TOKEN'
-
-Magento::Customer.me
-```
-
-### Get available regions for a country
-
-```rb
-country = Magento::Country.find('BR')
-
-country.available_regions
 ```
 
 ## Order
