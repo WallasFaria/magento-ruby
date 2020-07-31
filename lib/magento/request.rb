@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'uri'
 require 'http'
 
@@ -6,19 +7,19 @@ module Magento
   class Request
     class << self
       def get(resource)
-        salva_requisicao(:get, url(resource))
-        tratar_erro http_auth.get(url(resource))
+        save_request(:get, url(resource))
+        handle_error http_auth.get(url(resource))
       end
 
       def put(resource, body)
-        salva_requisicao(:put, url(resource), body)
-        tratar_erro http_auth.put(url(resource), json: body)
+        save_request(:put, url(resource), body)
+        handle_error http_auth.put(url(resource), json: body)
       end
 
       def post(resource, body = nil, url_completa = false)
         url = url_completa ? resource : url(resource)
-        salva_requisicao(:post, url, body)
-        tratar_erro http_auth.post(url, json: body)
+        save_request(:post, url, body)
+        handle_error http_auth.post(url, json: body)
       end
 
       private
@@ -68,37 +69,29 @@ module Magento
         )
       end
 
-      def tratar_erro(resposta)
+      def handle_error(resposta)
         unless resposta.status.success?
+          errors = []
           begin
-            corpo = resposta.parse
+            msg = resposta.parse['message']
+            errors = resposta.parse['errors']
           rescue StandardError
-            corpo = resposta.to_s
+            msg = resposta.to_s
           end
-          erro = {
-            erro: 'Erro de requisição Magento',
-            resposta: { status: resposta.status, corpo: corpo },
-            requisicao: @requisicao
-          }
+          raise Magento::NotFound.new(msg, resposta.status.code, errors, @request) if resposta.status.not_found?
 
-          raise Magento::UnprocessedRequestError, erro.to_json
+          raise Magento::MagentoError.new(msg, resposta.status.code, errors, @request)
         end
-
         resposta
       end
 
-      def salva_requisicao(verbo, p_url, p_corpo = nil)
+      def save_request(method, url, body = nil)
         begin
-          corpo = p_corpo[:product].reject { |e| e == :media_gallery_entries }
+          body = body[:product].reject { |e| e == :media_gallery_entries }
         rescue StandardError
-          corpo = p_corpo
         end
 
-        @requisicao = {
-          verbo: verbo,
-          url: p_url,
-          corpo: corpo
-        }
+        @request = { method: method, url: url, body: body }
       end
     end
   end
