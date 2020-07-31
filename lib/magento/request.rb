@@ -43,8 +43,8 @@ module Magento
       "#{base_url}/#{resource}"
     end
 
-    def parametros_de_busca(field:, value:, conditionType: :eq)
-      criar_parametros(
+    def search_params(field:, value:, conditionType: :eq)
+      create_params(
         filter_groups: {
           '0': {
             filters: {
@@ -59,11 +59,11 @@ module Magento
       )
     end
 
-    def parametros_de_campos(campos:)
-      criar_parametros(fields: campos)
+    def field_params(fields:)
+      create_params(fields: fields)
     end
 
-    def criar_parametros(filter_groups: nil, fields: nil, current_page: 1)
+    def create_params(filter_groups: nil, fields: nil, current_page: 1)
       CGI.unescape(
         {
           searchCriteria: {
@@ -75,20 +75,20 @@ module Magento
       )
     end
 
-    def handle_error(resposta)
-      unless resposta.status.success?
+    def handle_error(resp)
+      unless resp.status.success?
         errors = []
         begin
-          msg = resposta.parse['message']
-          errors = resposta.parse['errors']
+          msg = resp.parse['message']
+          errors = resp.parse['errors']
         rescue StandardError
-          msg = resposta.to_s
+          msg = resp.to_s
         end
-        raise Magento::NotFound.new(msg, resposta.status.code, errors, @request) if resposta.status.not_found?
+        raise Magento::NotFound.new(msg, resp.status.code, errors, @request) if resp.status.not_found?
 
-        raise Magento::MagentoError.new(msg, resposta.status.code, errors, @request)
+        raise Magento::MagentoError.new(msg, resp.status.code, errors, @request)
       end
-      resposta
+      resp
     end
 
     def save_request(method, url, body = nil)
