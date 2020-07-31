@@ -2,14 +2,16 @@
 
 ## Install
 
+Add in your Gemfile
+
 ```rb
 gem 'magento', '~> 0.0.3'
 ```
 
-or
+or run
 
 ```sh
-gem install 'magento'
+gem install magento
 ```
 
 ### Setup
@@ -50,6 +52,23 @@ Magento::Product.all(price_gt: 100, page: 2)
 ### Search products
 ```rb
 Magento::Product.search('tshort')
+```
+
+## Customer
+
+### Get current customer
+```rb
+Magento.token = 'CUSTOMER_TOKEN'
+
+Magento::Customer.me
+```
+
+### Get available regions for a country
+
+```rb
+country = Magento::Country.find('BR')
+
+country.available_regions
 ```
 
 ## Order
