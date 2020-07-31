@@ -81,7 +81,7 @@ module Magento
             requisicao: @requisicao
           }
 
-          raise Magento::Error::UnprocessedRequest, erro.to_json
+          raise Magento::UnprocessedRequestError, erro.to_json
         end
 
         resposta
