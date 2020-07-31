@@ -6,10 +6,10 @@ require_relative 'magento/errors'
 require_relative 'magento/request'
 require_relative 'magento/model'
 require_relative 'magento/product'
+require_relative 'magento/country'
 
-Dir[File.expand_path('magento/product/*.rb', __dir__)].map do |path|
-  require path
-end
+Dir[File.expand_path('magento/product/*.rb', __dir__)].map { |path| require path }
+Dir[File.expand_path('magento/country/*.rb', __dir__)].map { |path| require path }
 
 module Magento
   class << self
