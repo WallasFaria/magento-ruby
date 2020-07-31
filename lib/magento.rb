@@ -2,7 +2,7 @@
 
 require 'time'
 
-require_relative 'magento/error'
+require_relative 'magento/errors'
 require_relative 'magento/request'
 require_relative 'magento/model'
 require_relative 'magento/product'
