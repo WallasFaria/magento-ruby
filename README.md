@@ -2,14 +2,16 @@
 
 ## Install
 
+Add in your Gemfile
+
 ```rb
 gem 'magento', '~> 0.0.3'
 ```
 
-or
+or run
 
 ```sh
-gem install 'magento'
+gem install magento
 ```
 
 ### Setup
