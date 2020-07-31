@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.files         = ['lib/magento.rb']
   s.authors       = ["Nick Quaranto"]
   s.email         = 'nick@quaran.to'
-  s.homepage      = 'https://rubygems.org/gems/hola'
+  s.homepage      = 'https://github.com/WallasFaria/magento-ruby'
   s.require_paths = ['lib']
 
   s.add_dependency 'http', '~> 4.4'
