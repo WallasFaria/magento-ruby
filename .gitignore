@@ -1,0 +1,26 @@
+*.gem
+*.rbc
+.DS_Store
+*/.DS_Store
+.bundle
+.config
+coverage
+InstalledFiles
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+*.swp
+vimsession
+Gemfile.lock
+
+# YARD artifacts
+.yardoc
+_yardoc
+doc/
+test/vcr_cassettes
+
+.vscode
