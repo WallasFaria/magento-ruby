@@ -54,6 +54,23 @@ Magento::Product.all(price_gt: 100, page: 2)
 Magento::Product.search('tshort')
 ```
 
+## Customer
+
+### Get current customer
+```rb
+Magento.token = 'CUSTOMER_TOKEN'
+
+Magento::Customer.me
+```
+
+### Get available regions for a country
+
+```rb
+country = Magento::Country.find('BR')
+
+country.available_regions
+```
+
 ## Order
 
 ### Create Order as admin user
