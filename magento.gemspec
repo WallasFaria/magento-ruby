@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.summary       = 'Magento Ruby library'
   s.description   = 'Magento Ruby library'
   s.files         = `git ls-files`.split($/)
-  s.authors       = ["Nick Quaranto"]
-  s.email         = 'nick@quaran.to'
+  s.authors       = ["Wallas Faria"]
+  s.email         = 'wallasfaria@hotmail.com'
   s.homepage      = 'https://github.com/WallasFaria/magento-ruby'
   s.require_paths = ['lib']
 
