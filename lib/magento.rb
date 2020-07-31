@@ -8,8 +8,7 @@ require_relative 'magento/model'
 require_relative 'magento/product'
 require_relative 'magento/country'
 
-Dir[File.expand_path('magento/product/*.rb', __dir__)].map { |f| require f }
-Dir[File.expand_path('magento/country/*.rb', __dir__)].map { |f| require f }
+Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
 
 module Magento
   class << self
