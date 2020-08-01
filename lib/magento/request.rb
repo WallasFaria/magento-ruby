@@ -76,19 +76,19 @@ module Magento
     end
 
     def handle_error(resp)
-      unless resp.status.success?
-        errors = []
-        begin
-          msg = resp.parse['message']
-          errors = resp.parse['errors']
-        rescue StandardError
-          msg = resp.to_s
-        end
-        raise Magento::NotFound.new(msg, resp.status.code, errors, @request) if resp.status.not_found?
+      return resp if resp.status.success?
 
-        raise Magento::MagentoError.new(msg, resp.status.code, errors, @request)
+      begin
+        msg = resp.parse['message']
+        errors = resp.parse['errors']
+      rescue StandardError
+        msg = 'Failed access to the magento server'
+        errors = []
       end
-      resp
+
+      raise Magento::NotFound.new(msg, resp.status.code, errors, @request) if resp.status.not_found?
+
+      raise Magento::MagentoError.new(msg, resp.status.code, errors, @request)
     end
 
     def save_request(method, url, body = nil)
