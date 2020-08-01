@@ -7,27 +7,27 @@ module Magento
     class << self
       protected
 
-      def mapHash(klass, values)
+      def map_hash(klass, values)
         object = klass.new
         values.each do |key, value|
           object.singleton_class.instance_eval { attr_accessor key }
           if value.is_a?(Hash)
             class_name = inflector.camelize(inflector.singularize(key))
-            value = mapHash(Object.const_get("Magento::#{class_name}"), value)
+            value = map_hash(Object.const_get("Magento::#{class_name}"), value)
           elsif value.is_a?(Array)
-            value = mapArray(key, value)
+            value = map_array(key, value)
           end
           object.send("#{key}=", value)
         end
         object
       end
 
-      def mapArray(key, values)
+      def map_array(key, values)
         result = []
         values.each do |value|
           if value.is_a?(Hash)
             class_name = inflector.camelize(inflector.singularize(key))
-            result << mapHash(Object.const_get("Magento::#{class_name}"), value)
+            result << map_hash(Object.const_get("Magento::#{class_name}"), value)
           else
             result << value
           end
