@@ -7,6 +7,7 @@ require_relative 'magento/request'
 require_relative 'magento/model'
 require_relative 'magento/product'
 require_relative 'magento/country'
+require_relative 'magento/customer'
 
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
 
