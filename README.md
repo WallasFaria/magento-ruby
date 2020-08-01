@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.1.0'
+gem 'magento', '~> 0.2.0'
 ```
 
 or run
@@ -34,6 +34,7 @@ Magento::Product.find_by_sku('sku-test')
 
 ### Get customer by id
 ```rb
+Magento::Customer.find(id) # or
 Magento::Customer.find_by_id(id)
 ```
 
