@@ -6,6 +6,8 @@ module Magento
         map_hash Customer, customer_hash
       end
 
+      alias_method :find, :find_by_id
+
       def find_by_token(token)
         user_request = Request.new(token: token)
         customer_hash = user_request.get('customers/me').parse
