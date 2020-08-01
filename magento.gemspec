@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name          = 'magento'
-  s.version       = '0.1.1'
+  s.version       = '0.2.0'
   s.date          = '2020-07-31'
   s.summary       = 'Magento Ruby library'
   s.description   = 'Magento Ruby library'
