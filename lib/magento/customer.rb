@@ -8,7 +8,7 @@ module Magento
 
       def find_by_token(token)
         user_request = Request.new(token: token)
-        customer_hash = request.get("customers/me").parse
+        customer_hash = user_request.get('customers/me').parse
         map_hash Customer, customer_hash
       end
     end
