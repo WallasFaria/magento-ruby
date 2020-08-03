@@ -66,27 +66,35 @@ Magento::Product.select(:id, :sku, :name, extension_attributes: [:website_ids, {
 ```rb
 Magento::Product.where(name_like: 'IPhone%').all
 Magento::Product.where(price_gt: 100).all
-Magento::Product.where(price_gt: 100, price_lt: 200).all
+
+# price > 10 AND price < 20
+Magento::Product.where(price_gt: 10)
+                .where(price_lt: 20).all
+
+# price < 1 OR price > 100
+Magento::Product.where(price_lt: 1, price_gt: 100).all
+
+Magento::Order.where(status_in: [:canceled, :complete]).all
 ```
 
 | Condition | Notes |
-| ----------| ------|
-|eq | Equals. |
-|finset | A value within a set of values |
-|from | The beginning of a range. Must be used with to |
-|gt | Greater than |
-|gteq | Greater than or equal |
-|in | In. The value can contain a comma-separated list of values. |
-|like | Like. The value can contain the SQL wildcard characters when like is  |specified.
-|lt | Less than |
-|lteq | Less than or equal |
-|moreq | More or equal |
-|neq | Not equal |
-|nfinset | A value that is not within a set of values |
-|nin | Not in. The value can contain a comma-separated list of values. |
-|notnull | Not null |
-|null | Null |
-|to | The end of a range. Must be used with from |
+| --------- | ----- |
+|eq         | Equals. |
+|finset     | A value within a set of values |
+|from       | The beginning of a range. Must be used with to |
+|gt         | Greater than |
+|gteq       | Greater than or equal |
+|in         | In. The value is an array |
+|like       | Like. The value can contain the SQL wildcard characters when like is specified. |
+|lt         | Less than |
+|lteq       | Less than or equal |
+|moreq      | More or equal |
+|neq        | Not equal |
+|nfinset    | A value that is not within a set of values |
+|nin        | Not in. The value is an array |
+|notnull    | Not null |
+|null       | Null |
+|to         | The end of a range. Must be used with from |
 
 
 #### SortOrder:

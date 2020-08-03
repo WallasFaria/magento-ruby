@@ -38,6 +38,7 @@ module Magento
       filters = []
       attributes.each do |key, value|
         field, condition = parse_filter(key)
+        value = parse_value_filter(condition, value)
         filters << { field: field, conditionType: condition, value: value }
       end
       filter_groups << { filters: filters }
@@ -113,6 +114,14 @@ module Magento
       raise 'Condition not accepted' unless ACCEPTED_CONDITIONS.include?(key.match(patter)[2])
 
       key.match(patter).to_a[1..2]
+    end
+
+    def parse_value_filter(condition, value)
+      if ['in', 'nin'].include?(condition) && value.is_a?(Array)
+        value = value.join(',')
+      end
+
+      value
     end
 
     def parse_field(value)
