@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'dry/inflector'
 
 require_relative 'magento/errors'
 require_relative 'magento/request'
 require_relative 'magento/model'
+require_relative 'magento/model_mapper'
+require_relative 'magento/query'
 require_relative 'magento/product'
 require_relative 'magento/country'
 require_relative 'magento/customer'
+require_relative 'magento/order'
 
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
 

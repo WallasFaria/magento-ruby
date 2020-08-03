@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.2.0'
+gem 'magento', '~> 0.3.1'
 ```
 
 or run
@@ -22,67 +22,102 @@ Magento.token = 'MAGENTO_API_KEY'
 Magento.store = :default # optional, Default is :all
 ```
 
-## Product
-
-### Get product details by sku
-
+## Models
 ```rb
-Magento::Product.find_by_sku('sku-test')
+Magento::Product
+Magento::Order
+Magento::Country
+Magento::Category
 ```
 
-## Customer
+## Get details
 
-### Get customer by id
 ```rb
-Magento::Customer.find(id) # or
-Magento::Customer.find_by_id(id)
+Magento::Product.find('sku-test')
+Magento::Order.find(25)
+Magento::Country.find('BR')
 ```
+\* _same pattern to all models_
 
-### Get customer by token
+**Outside pattern**
+
+Get customer by token
+
 ```rb
 Magento::Customer.find_by_token('user_token')
 ```
 
-## Countries
-
-### Get available regions for a country
+## Get List
 
 ```rb
-country = Magento::Country.find('BR')
-
-country.available_regions
+Magento::Product.all
 ```
 
-# TODO
-### Get product list
-
-Get all
+#### Select fields:
 ```rb
-Magento::Product.all()
+Magento::Product.select(:id, :sku, :name).all
+Magento::Product.select(:id, :sku, :name, extension_attributes: :category_links).all
+Magento::Product.select(:id, :sku, :name, extension_attributes: [:category_links, :website_ids]).all
+Magento::Product.select(:id, :sku, :name, extension_attributes: [:website_ids, { category_links: :category_id }]).all
 ```
 
-Set page and quantity per page
+#### Filters:
+
 ```rb
-Magento::Product.all(page: 1, page_size: 25) # Default page size is 50
+Magento::Product.where(name_like: 'IPhone%').all
+Magento::Product.where(price_gt: 100).all
+Magento::Product.where(price_gt: 100, price_lt: 200).all
 ```
 
-Filter list by attribute
+| Condition | Notes |
+| ----------| ------|
+|eq | Equals. |
+|finset | A value within a set of values |
+|from | The beginning of a range. Must be used with to |
+|gt | Greater than |
+|gteq | Greater than or equal |
+|in | In. The value can contain a comma-separated list of values. |
+|like | Like. The value can contain the SQL wildcard characters when like is  |specified.
+|lt | Less than |
+|lteq | Less than or equal |
+|moreq | More or equal |
+|neq | Not equal |
+|nfinset | A value that is not within a set of values |
+|nin | Not in. The value can contain a comma-separated list of values. |
+|notnull | Not null |
+|null | Null |
+|to | The end of a range. Must be used with from |
+
+
+#### SortOrder:
+
 ```rb
-Magento::Product.all(name_like: 'IPhone%')
-
-Magento::Product.all(price_gt: 100, page: 2)
+Magento::Product.order(:sku).all
+Magento::Product.order(sku: :desc).all
+Magento::Product.order(status: :desc, name: :asc).all
 ```
 
-### Search products
+#### Pagination:
+
 ```rb
-Magento::Product.search('tshort')
+# Set page and quantity per page
+Magento::Product.page(1).per(25) # Default per is 50
 ```
 
-## Order
+#### Example of several options together:
+```rb
+Magento::Product.select(:sku, :name, :price)
+                .where(name_like: 'Tshort%')
+                .order(price: :desc)
+                .per(10)
+                .all
+```
 
-### Create Order as admin user
+\* _same pattern to all models_
+___
+## \######### TODO \##########
 
-See the [documentation](https://magento.redoc.ly/2.4-admin/#operation/salesOrderRepositoryV1SavePost) to all attributes
+## Create
 
 ```rb
 Magento::Order.create(
@@ -108,4 +143,34 @@ Magento::Order.create(
     # attrbutes...
   }
 )
+```
+
+### Update
+
+```rb
+product = Magento::Product.find('sku-teste')
+
+product.name = 'Updated name'
+product.save
+
+# or
+
+product.update(name: 'Updated name')
+```
+
+### Delete
+
+```rb
+product = Magento::Product.find('sku-teste')
+
+product.delete
+
+# or
+
+Magento::Product.delete('sku-teste')
+```
+
+### Search products
+```rb
+Magento::Product.search('tshort')
 ```

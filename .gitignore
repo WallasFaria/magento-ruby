@@ -25,4 +25,4 @@ test/vcr_cassettes
 
 .vscode
 .byebug_history
-test.rb
+/*test.rb
