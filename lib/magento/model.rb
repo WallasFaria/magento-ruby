@@ -37,7 +37,7 @@ module Magento
       end
 
       def delete(id)
-        request.delete("#{api_resource}/#{id}")
+        request.delete("#{api_resource}/#{id}").status.success?
       end
 
       def update(id, attributes)

@@ -12,7 +12,7 @@ module Magento
       @store = store
     end
 
-    def get(resource, token: nil)
+    def get(resource)
       save_request(:get, url(resource))
       handle_error http_auth.get(url(resource))
     end
@@ -26,6 +26,11 @@ module Magento
       url = url_completa ? resource : url(resource)
       save_request(:post, url, body)
       handle_error http_auth.post(url, json: body)
+    end
+
+    def delete(resource)
+      save_request(:delete, url(resource))
+      handle_error http_auth.delete(url(resource))
     end
 
     private
