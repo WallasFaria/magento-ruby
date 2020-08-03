@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.3.2'
+gem 'magento', '~> 0.3.3'
 ```
 
 or run
@@ -122,8 +122,6 @@ Magento::Product.select(:sku, :name, :price)
 ```
 
 \* _same pattern to all models_
-___
-## \######### TODO \##########
 
 ## Create
 
@@ -177,6 +175,10 @@ product.delete
 
 Magento::Product.delete('sku-teste')
 ```
+
+___
+
+##TODO:
 
 ### Search products
 ```rb
