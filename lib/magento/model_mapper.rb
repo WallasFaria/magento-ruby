@@ -4,11 +4,11 @@ class ModelMapper
   end
 
   def to_model(model)
-    map_hash(model, @from)
+    map_hash(model, @from) if @from
   end
 
   def to_hash
-    self.class.to_hash(@from)
+    self.class.to_hash(@from) if @from
   end
 
   def self.from_object(object)

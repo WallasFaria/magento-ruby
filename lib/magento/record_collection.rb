@@ -7,9 +7,10 @@ module Magento
     attr_accessor :items, :search_criteria, :total_count
     extend Forwardable
 
-    def initialize
-      @items = []
-      @search_criteria = Magento::SearchCriterium
+    def initialize(items:, total_count: nil, search_criteria: nil)
+      @items           = items || []
+      @total_count     = total_count || @items.size
+      @search_criteria = search_criteria || Magento::SearchCriterium.new
     end
 
     def_delegators :@search_criteria, :current_page, :filter_groups, :page_size
@@ -23,43 +24,20 @@ module Magento
     alias_method :per, :page_size
 
     class << self
-      def from_magento_response(response, model:)
-        if model == Magento::Category
-          handle_category_response(response, model)
-        else
-          handle_response(response, model)
-        end
-      end
-
-      private
-
-      def handle_category_response(response, model)
-        collection = Magento::RecordCollection.new
-
-        collection.items = response['children_data']&.map do |item|
-          ModelMapper.from_hash(item).to_model(model)
-        end || []
-
-        collection.total_count = response['children_data']&.size || 0
-        collection
-      end
-
-      def handle_response(response, model)
-        collection = Magento::RecordCollection.new
-
-        collection.items = response['items']&.map do |item|
-          ModelMapper.from_hash(item).to_model(model)
-        end || []
-
-        collection.total_count = response['total_count'] if response['total_count']
-
-        if response['search_criteria']
-          collection.search_criteria = ModelMapper
-            .from_hash(response['search_criteria'])
-            .to_model(Magento::SearchCriterium)
+      def from_magento_response(response, model:, iterable_field: 'items')
+        items = response[iterable_field]&.map do 
+          |item| ModelMapper.from_hash(item).to_model(model)
         end
 
-        collection
+        search_criteria = ModelMapper
+              .from_hash(response['search_criteria'])
+              .to_model(Magento::SearchCriterium)
+
+        Magento::RecordCollection.new(
+          items: items,
+          total_count: response['total_count'],
+          search_criteria: search_criteria
+        )
       end
     end
   end
