@@ -17,8 +17,8 @@ module Magento
     def_delegators :@items, :last, :each_index, :sample, :sort, :count, :[],
                    :find_index, :select, :filter, :reject, :collect, :map,
                    :first, :all?, :any?, :none?, :one?, :reverse_each, :take,
-                   :take_while, :drop, :drop_while, :cycle, :index, :sort_by,
-                   :empty?, :reverse, :length, :size, :each, :find
+                   :empty?, :reverse, :length, :size, :each, :find,
+                   :take_while, :index, :sort_by
 
     alias_method :per, :page_size
 
