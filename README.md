@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.3.7'
+gem 'magento', '~> 0.4.0'
 ```
 
 or run
@@ -109,19 +109,54 @@ Magento::Product.order(status: :desc, name: :asc).all
 
 ```rb
 # Set page and quantity per page
-Magento::Product.page(1).per(25) # Default per is 50
+Magento::Product.page(1)       # Current page, Default is 1
+                .page_size(25) # Default is 50
+                .all
+
+# per is an alias to page_size
+Magento::Product.per(25).all
 ```
 
 #### Example of several options together:
 ```rb
-Magento::Product.select(:sku, :name, :price)
-                .where(name_like: 'Tshort%')
-                .order(price: :desc)
-                .per(10)
-                .all
+products = Magento::Product.select(:sku, :name)
+                           .where(name_like: 'biscoito%')
+                           .page(1)
+                           .page_size(5)
+                           .all
 ```
 
 \* _same pattern to all models_
+
+### Response
+
+The `all` method retorns a `Magento::RecordCollection` instance
+
+```rb
+products.first
+# #<Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
+
+products[0]
+# #<Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
+
+products.last
+# #<Magento::Product @sku="964", @name="Biscoito Negresco 140 G Original">
+
+products.map(&:sku)
+# ["2100", "792", "836", "913", "964"]
+
+products.size
+# 5
+
+products.current_page 
+# 1
+
+products.page_size    
+# 5
+
+products.total_count  
+# 307
+```
 
 ## Create
 
