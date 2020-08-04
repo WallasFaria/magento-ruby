@@ -42,7 +42,7 @@ class ModelMapper
     values.each do |key, value|
       object.singleton_class.instance_eval { attr_accessor key }
       if value.is_a?(Hash)
-        class_name = inflector.camelize(inflector.singularize(key))
+        class_name = Magento.inflector.camelize(Magento.inflector.singularize(key))
         value = map_hash(Object.const_get("Magento::#{class_name}"), value)
       elsif value.is_a?(Array)
         value = map_array(key, value)
@@ -56,16 +56,12 @@ class ModelMapper
     result = []
     values.each do |value|
       if value.is_a?(Hash)
-        class_name = inflector.camelize(inflector.singularize(key))
+        class_name = Magento.inflector.camelize(Magento.inflector.singularize(key))
         result << map_hash(Object.const_get("Magento::#{class_name}"), value)
       else
         result << value
       end
     end
     result
-  end
-
-  def inflector
-    @inflector ||= Dry::Inflector.new
   end
 end

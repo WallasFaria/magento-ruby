@@ -7,7 +7,9 @@ require_relative 'magento/errors'
 require_relative 'magento/request'
 require_relative 'magento/model'
 require_relative 'magento/model_mapper'
+require_relative 'magento/record_collection'
 require_relative 'magento/query'
+require_relative 'magento/category'
 require_relative 'magento/product'
 require_relative 'magento/country'
 require_relative 'magento/customer'
@@ -18,6 +20,12 @@ Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
 module Magento
   class << self
     attr_accessor :url, :open_timeout, :timeout, :token, :store
+
+    def inflector
+      @inflector ||= Dry::Inflector.new do |inflections|
+        inflections.singular 'children_data', 'category'
+      end
+    end
   end
 
   self.url            = ENV['MAGENTO_URL']

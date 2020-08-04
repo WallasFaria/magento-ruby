@@ -47,11 +47,11 @@ module Magento
       end
 
       def api_resource
-        endpoint || inflector.pluralize(entity_name)
+        endpoint || Magento.inflector.pluralize(entity_name)
       end
 
       def entity_name
-        inflector.underscore(name).sub('magento/', '')
+        Magento.inflector.underscore(name).sub('magento/', '')
       end
 
       def primary_key
@@ -69,10 +69,6 @@ module Magento
 
       def request
         @request ||= Request.new
-      end
-
-      def inflector
-        @inflector ||= Dry::Inflector.new
       end
     end
   end
