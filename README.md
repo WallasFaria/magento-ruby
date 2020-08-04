@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.4.0'
+gem 'magento', '~> 0.4.1'
 ```
 
 or run
@@ -134,28 +134,74 @@ The `all` method retorns a `Magento::RecordCollection` instance
 
 ```rb
 products.first
-# #<Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
+>> <Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
 
 products[0]
-# #<Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
+>> <Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
 
 products.last
-# #<Magento::Product @sku="964", @name="Biscoito Negresco 140 G Original">
+>> <Magento::Product @sku="964", @name="Biscoito Negresco 140 G Original">
 
 products.map(&:sku)
-# ["2100", "792", "836", "913", "964"]
+>> ["2100", "792", "836", "913", "964"]
 
 products.size
-# 5
+>> 5
 
-products.current_page 
-# 1
+products.current_page
+>> 1
 
-products.page_size    
-# 5
+products.page_size
+>> 5
 
-products.total_count  
-# 307
+products.total_count
+>> 307
+
+products.filter_groups
+>> [<Magento::FilterGroup @filters=[<Magento::Filter @field="name", @value="biscoito%", @condition_type="like">]>]
+```
+
+All Methods:
+
+```rb
+# Information about search criteria
+:current_page
+:page_size
+:total_count
+:filter_groups
+
+# Iterating with the list of items
+:count
+:length
+:size
+
+:first
+:last
+:[]
+:find
+
+:each
+:each_index
+:sample
+
+:map
+:select
+:filter
+:reject
+:collect
+:take
+:take_while
+
+:sort
+:sort_by
+:reverse_each
+:reverse
+
+:all?
+:any?
+:none?
+:one?
+:empty?
 ```
 
 ## Create
