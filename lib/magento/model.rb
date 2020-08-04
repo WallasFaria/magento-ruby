@@ -20,6 +20,10 @@ module Magento
       self.class.delete(send(self.class.primary_key))
     end
 
+    def id
+      @id || send(self.class.primary_key)
+    end
+
     class << self
       extend Forwardable
       
