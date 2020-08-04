@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.4.1'
+gem 'magento', '~> 0.4.2'
 ```
 
 or run
@@ -181,7 +181,7 @@ All Methods:
 :find
 
 :each
-:each_index
+:each_with_index
 :sample
 
 :map
