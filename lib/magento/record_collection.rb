@@ -4,7 +4,7 @@ require 'forwardable'
 
 module Magento
   class RecordCollection
-    attr_accessor :items, :search_criteria, :total_count
+    attr_reader :items, :search_criteria, :total_count
     extend Forwardable
 
     def initialize(items:, total_count: nil, search_criteria: nil)
