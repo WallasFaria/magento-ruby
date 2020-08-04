@@ -50,10 +50,12 @@ module Magento
       self
     end
 
-    def per(page_size)
-      self.page_size = page_size
+    def page_size(page_size)
+      @page_size = page_size
       self
     end
+
+    alias_method :per, :page_size
 
     def select(*fields)
       fields = fields.map { |field| parse_field(field) }
@@ -88,7 +90,7 @@ module Magento
 
     private
 
-    attr_accessor :current_page, :filter_groups, :page_size, :request, :sort_orders, :model, :fields
+    attr_accessor :current_page, :filter_groups, :request, :sort_orders, :model, :fields
 
     def endpoint
       model.api_resource
@@ -106,7 +108,7 @@ module Magento
           filterGroups: filter_groups,
           currentPage: current_page,
           sortOrders: sort_orders,
-          pageSize: page_size
+          pageSize: @page_size
         }.compact,
         fields: fields
       }.compact
