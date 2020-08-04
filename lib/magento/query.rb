@@ -57,7 +57,13 @@ module Magento
 
     def select(*fields)
       fields = fields.map { |field| parse_field(field) }
-      self.fields = "items[#{fields.join(',')}]"
+
+      if model == Magento::Category
+        self.fields = "children_data[#{fields.join(',')}]"
+      else
+        self.fields = "items[#{fields.join(',')}],search_criteria,total_count"
+      end
+
       self
     end
 
@@ -76,8 +82,8 @@ module Magento
     end
 
     def all
-      items = request.get("#{endpoint}?#{query_params}").parse['items']
-      items ? items.map { |i| ModelMapper.from_hash(i).to_model(model) } : []
+      result = request.get("#{endpoint}?#{query_params}").parse
+      RecordCollection.from_magento_response(result, model: model)
     end
 
     private
