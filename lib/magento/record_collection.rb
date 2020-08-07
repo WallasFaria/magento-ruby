@@ -16,27 +16,19 @@ module Magento
     def_delegators :@search_criteria, :current_page, :filter_groups, :page_size
 
     def_delegators :@items, :count, :length, :size, :first, :last, :[],
-                   :find, :each, :each_with_index, :sample, :map, :select, 
+                   :find, :each, :each_with_index, :sample, :map, :select,
                    :filter, :reject, :collect, :take, :take_while, :sort,
-                   :sort_by, :reverse_each, :reverse, :all?, :any?, :none?, 
+                   :sort_by, :reverse_each, :reverse, :all?, :any?, :none?,
                    :one?, :empty?
 
     alias per page_size
 
     class << self
       def from_magento_response(response, model:, iterable_field: 'items')
-        items = response[iterable_field]&.map do |item|
-          ModelMapper.from_hash(item).to_model(model)
-        end
-
-        search_criteria = ModelMapper
-                          .from_hash(response['search_criteria'])
-                          .to_model(Magento::SearchCriterium)
-
         Magento::RecordCollection.new(
-          items: items,
+          items: response[iterable_field]&.map { |item| model.build(item) },
           total_count: response['total_count'],
-          search_criteria: search_criteria
+          search_criteria: Magento::SearchCriterium.build(response['search_criteria'])
         )
       end
     end
