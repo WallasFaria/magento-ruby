@@ -4,9 +4,10 @@ require 'forwardable'
 
 module Magento
   class Model
+    include Magento::ModelParser
+
     def save
-      body = ModelMapper.from_object(self).to_hash
-      self.class.update(send(self.class.primary_key), body)
+      self.class.update(send(self.class.primary_key), to_h)
     end
 
     def update(attrs)
@@ -26,18 +27,18 @@ module Magento
 
     class << self
       extend Forwardable
-      
+
       def_delegators :query, :all, :page, :per, :page_size, :order, :select, :where
 
       def find(id)
         hash = request.get("#{api_resource}/#{id}").parse
-        ModelMapper.from_hash(hash).to_model(self)
+        build(hash)
       end
 
       def create(attributes)
         body = { entity_name => attributes }
         hash = request.post(api_resource, body).parse
-        ModelMapper.from_hash(hash).to_model(self)
+        build(hash)
       end
 
       def delete(id)
@@ -45,9 +46,9 @@ module Magento
       end
 
       def update(id, attributes)
-        body = { entity_name => attributes }
+        body = { entity_key => attributes }
         hash = request.put("#{api_resource}/#{id}", body).parse
-        ModelMapper.from_hash(hash).to_model(self)
+        build(hash)
       end
 
       def api_resource
@@ -65,7 +66,11 @@ module Magento
       protected
 
       attr_writer :primary_key
-      attr_accessor :endpoint
+      attr_accessor :endpoint, :entity_key
+
+      def entity_key
+        @entity_key || entity_name
+      end
 
       def query
         Query.new(self)
