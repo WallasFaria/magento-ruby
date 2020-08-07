@@ -48,44 +48,15 @@ module Magento
       "#{base_url}/#{resource}"
     end
 
-    def search_params(field:, value:, conditionType: :eq)
-      create_params(
-        filter_groups: {
-          '0': {
-            filters: {
-              '0': {
-                field: field,
-                conditionType: conditionType,
-                value: value
-              }
-            }
-          }
-        }
-      )
-    end
-
-    def field_params(fields:)
-      create_params(fields: fields)
-    end
-
-    def create_params(filter_groups: nil, fields: nil, current_page: 1)
-      CGI.unescape(
-        {
-          searchCriteria: {
-            currentPage: current_page,
-            filterGroups: filter_groups
-          }.compact,
-          fields: fields
-        }.compact.to_query
-      )
-    end
-
     def handle_error(resp)
       return resp if resp.status.success?
 
       begin
         msg = resp.parse['message']
         errors = resp.parse['errors']
+        if resp.parse['parameters'].is_a? Hash
+          resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v }
+        end
       rescue StandardError
         msg = 'Failed access to the magento server'
         errors = []
