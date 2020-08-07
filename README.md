@@ -257,6 +257,25 @@ product.delete
 Magento::Product.delete('sku-teste')
 ```
 
+## GuestCart
+
+Set payment information to finish the order
+```rb
+cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+# or use "build" to not request information from the magento API
+cart = Magento::GuestCart.build(
+  cart_id: 'aj8oUtY1Qi44Fror6UWVN7ftX1idbBKN'
+)
+
+cart.payment_information(
+  email: 'customer@gmail.com',
+  payment: { method: 'cashondelivery' }
+)
+
+>> "234575" # return the order id
+```
+
 ___
 
 ##TODO:
