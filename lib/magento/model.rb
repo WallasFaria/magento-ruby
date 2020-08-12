@@ -36,7 +36,7 @@ module Magento
       end
 
       def create(attributes)
-        body = { entity_name => attributes }
+        body = { entity_key => attributes }
         hash = request.post(api_resource, body).parse
         build(hash)
       end
