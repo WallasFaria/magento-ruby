@@ -77,7 +77,7 @@ module Magento
       end
 
       def request
-        @request ||= Request.new
+        Request.new
       end
     end
   end

@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.5.2'
+gem 'magento', '~> 0.5.3'
 ```
 
 or run
@@ -20,6 +20,10 @@ gem install magento
 Magento.url   = 'https://yourstore.com'
 Magento.token = 'MAGENTO_API_KEY'
 Magento.store = :default # optional, Default is :all
+
+Magento.with_config(store: :other_store) do # accepts store, url and token parameters
+  Magento::Product.find('sku')
+end
 ```
 
 ## Models
