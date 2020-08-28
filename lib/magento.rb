@@ -35,6 +35,22 @@ module Magento
   self.token          = ENV['MAGENTO_TOKEN']
   self.store          = ENV['MAGENTO_STORE'] || :all
 
+  def self.with_config(utl: Magento.url, token: Magento.token, store: Magento.store)
+    @old_url   = self.url
+    @old_token = self.token
+    @old_store = self.store
+    
+    self.url   = utl
+    self.token = token
+    self.store = store
+
+    yield
+  ensure
+    self.url   = @old_url
+    self.token = @old_token
+    self.store = @old_store
+  end
+
   def self.production?
     ENV['RACK_ENV'] == 'production' ||
       ENV['RAILS_ENV'] == 'production' ||
