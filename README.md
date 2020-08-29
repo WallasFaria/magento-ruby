@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.5.3'
+gem 'magento', '~> 0.5.4'
 ```
 
 or run
@@ -155,6 +155,12 @@ products.size
 products.current_page
 >> 1
 
+products.next_page
+>> 2
+
+products.last_page?
+>> false
+
 products.page_size
 >> 5
 
@@ -170,6 +176,8 @@ All Methods:
 ```rb
 # Information about search criteria
 :current_page
+:next_page
+:last_page?
 :page_size
 :total_count
 :filter_groups
