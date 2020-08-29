@@ -23,6 +23,17 @@ module Magento
 
     alias per page_size
 
+    def last_page?
+      current_page * page_size >= total_count
+    end
+
+    #
+    # Returns the {number} of the next page or {nil} 
+    # when the current_page is the last page
+    def next_page
+      current_page + 1 unless last_page?
+    end
+
     class << self
       def from_magento_response(response, model:, iterable_field: 'items')
         Magento::RecordCollection.new(
