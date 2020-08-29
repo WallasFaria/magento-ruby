@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.6.0'
+gem 'magento', '~> 0.7.0'
 ```
 
 or run
@@ -287,6 +287,35 @@ cart.payment_information(
 
 >> "234575" # return the order id
 ```
+
+## Invoice an Order
+
+```rb
+Magento::Order.invoice(order_id)
+>> 25 # return incoice id
+
+# or from instance
+
+order = Magento::Order.find(order_id)
+
+order.invoice
+
+# you can pass parameters too
+
+order.invoice(
+  capture: false,
+  appendComment: true,
+  items: [{ order_item_id: 123, qty: 1 }], # pass items to partial invoice
+  comment: {
+    extension_attributes: { },
+    comment: "string",
+    is_visible_on_front: 0
+  },
+  notify: true
+)
+```
+
+[Complete Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdinvoice#operation/salesInvoiceOrderV1ExecutePost)
 
 ___
 
