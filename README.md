@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.7.0'
+gem 'magento', '~> 0.8.0'
 ```
 
 or run
@@ -410,6 +410,17 @@ order.ship(
 ```
 
 [Complete Shipment Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdship#operation/salesShipOrderV1ExecutePost)
+
+
+## Cancel an Order
+
+```rb
+order = Magento::Order.find(order_id)
+
+order.cancel # or
+
+Magento::Order.cancel(order_id)
+```
 
 ___
 

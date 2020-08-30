@@ -16,6 +16,10 @@ module Magento
       self.class.update(attrs)
     end
 
+    def cancel
+      self.class.cancel(id)
+    end
+
     #
     # Invoice current order
     #
@@ -46,6 +50,11 @@ module Magento
       def update(attributes)
         hash = request.put('orders/create', { entity_key => attributes }).parse
         build(hash)
+      end
+
+      # @return {Boolean}
+      def cancel(order_id)
+        request.post("orders/#{order_id}/cancel").parse
       end
 
       #
