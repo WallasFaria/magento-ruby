@@ -25,8 +25,21 @@ module Magento
     # order.invoice(capture: false) # See the invoice class method for more information
     #
     # @return String: return the invoice id
-    def invoice(invoice_attributes=nil)
-      self.class.invoice(id, invoice_attributes)
+    def invoice(params=nil)
+      self.class.invoice(id, params)
+    end
+
+    #
+    # Creates new Shipment for given Order.
+    #
+    # order = Magento::Order.find(order_id)
+    #
+    # order.ship # or you can pass parameters
+    # order.ship(notify: false) # See the shipment class method for more information
+    #
+    # Return the shipment id
+    def ship(params=nil)
+      self.class.ship(id, params)
     end
 
     class << self
@@ -58,8 +71,38 @@ module Magento
       # to complete [documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdinvoice#operation/salesInvoiceOrderV1ExecutePost)
       #
       # @return String: return the invoice id
-      def invoice(order_id, invoice_attributes=nil)
-        request.post("order/#{order_id}/invoice", invoice_attributes).parse
+      def invoice(order_id, invoice_params=nil)
+        request.post("order/#{order_id}/invoice", invoice_params).parse
+      end
+
+      #
+      # Creates new Shipment for given Order.
+      #
+      # Magento::Order.ship(order_id)
+      #
+      # or
+      #
+      # Magento::Order.ship(
+      #   order_id,
+      #   capture: false,
+      #   appendComment: true,
+      #   items: [{ order_item_id: 123, qty: 1 }], # pass items to partial shipment
+      #   tracks: [
+      #     {
+      #       extension_attributes: { },
+      #       track_number: "string",
+      #       title: "string",
+      #       carrier_code: "string"
+      #     }
+      #   ]
+      #   notify: true
+      # )
+      #
+      # to complete [documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdship#operation/salesShipOrderV1ExecutePost)
+      #
+      # @return {String}: return the shipment id
+      def ship(order_id, shipment_params = nil)
+        request.post("order/#{order_id}/ship", shipment_params).parse
       end
     end
   end
