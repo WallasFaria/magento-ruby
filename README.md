@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.6.0'
+gem 'magento', '~> 0.7.0'
 ```
 
 or run
@@ -288,6 +288,129 @@ cart.payment_information(
 >> "234575" # return the order id
 ```
 
+## Invoice an Order
+
+```rb
+Magento::Order.invoice(order_id)
+>> 25 # return incoice id
+
+# or from instance
+
+order = Magento::Order.find(order_id)
+
+invoice_id = order.invoice
+
+# you can pass parameters too
+
+invoice_id = order.invoice(
+  capture: false,
+  appendComment: true,
+  items: [{ order_item_id: 123, qty: 1 }], # pass items to partial invoice
+  comment: {
+    extension_attributes: { },
+    comment: "string",
+    is_visible_on_front: 0
+  },
+  notify: true
+)
+```
+
+[Complete Invoice Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdinvoice#operation/salesInvoiceOrderV1ExecutePost)
+
+## Create refund for invoice
+
+```rb
+Magento::Invoice.invoice(refund_id)
+>> 12 # return refund id
+
+# or from instance
+
+invoice = Magento::Invoice.find(invoice_id)
+
+refund_id = invoice.refund
+
+# you can pass parameters too
+
+invoice.refund(
+  items: [
+    {
+      extension_attributes: {},
+      order_item_id: 0,
+      qty: 0
+    }
+  ],
+  isOnline: true,
+  notify: true,
+  appendComment: true,
+  comment: {
+    extension_attributes: {},
+    comment: string,
+    is_visible_on_front: 0
+  },
+  arguments: {
+    shipping_amount: 0,
+    adjustment_positive: 0,
+    adjustment_negative: 0,
+    extension_attributes: {
+      return_to_stock_items: [0]
+    }
+  }
+)
+```
+
+[Complete Refund Documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundInvoiceV1ExecutePost)
+
+
+## Other Invoice methods
+
+```rb
+invoice = Magento::Invoice.find(invoice_id)
+
+invoice.capture # or
+Magento::Invoice.capture(invoice_id)
+
+invoice.void # or
+Magento::Invoice.void(invoice_id)
+
+invoice.send_email # or
+Magento::Invoice.send_email(invoice_id)
+
+Magento::Invoice.comments(invoice_id).all
+Magento::Invoice.comments(invoice_id).where(created_at_gt: Date.today.prev_day).all
+```
+
+## Creates new Shipment for given Order.
+
+```rb
+Magento::Order.ship(order_id)
+>> 25 # return shipment id
+
+# or from instance
+
+order = Magento::Order.find(order_id)
+
+order.ship
+
+# you can pass parameters too
+
+order.ship(
+  capture: false,
+  appendComment: true,
+  items: [{ order_item_id: 123, qty: 1 }], # pass items to partial shipment
+  tracks: [
+    {
+      extension_attributes: { },
+      track_number: "string",
+      title: "string",
+      carrier_code: "string"
+    }
+  ]
+  notify: true
+)
+```
+
+[Complete Shipment Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdship#operation/salesShipOrderV1ExecutePost)
+
 ___
 
 ##TODO:
@@ -296,3 +419,31 @@ ___
 ```rb
 Magento::Product.search('tshort')
 ```
+
+### First result
+```rb
+Magento::Product.first
+>> <Magento::Product @sku="some-sku" ...>
+
+Magento::Product.where(name_like: 'some name%').first
+>> <Magento::Product @sku="some-sku" ...>
+```
+
+### Last result
+```rb
+Magento::Product.last
+>> <Magento::Product @sku="some-sku" ...>
+
+Magento::Product.where(name_like: 'some name%').last
+>> <Magento::Product @sku="some-sku" ...>
+```
+
+### Count result
+```rb
+Magento::Product.count
+>> 7855
+Magento::Product.where(name_like: 'some name%').count
+>> 15
+```
+
+### Tests

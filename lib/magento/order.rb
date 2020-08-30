@@ -16,10 +16,93 @@ module Magento
       self.class.update(attrs)
     end
 
+    #
+    # Invoice current order
+    #
+    # order = Magento::Order.find(order_id)
+    #
+    # order.invoice # or you can pass parameters
+    # order.invoice(capture: false) # See the invoice class method for more information
+    #
+    # @return String: return the invoice id
+    def invoice(params=nil)
+      self.class.invoice(id, params)
+    end
+
+    #
+    # Creates new Shipment for given Order.
+    #
+    # order = Magento::Order.find(order_id)
+    #
+    # order.ship # or you can pass parameters
+    # order.ship(notify: false) # See the shipment class method for more information
+    #
+    # Return the shipment id
+    def ship(params=nil)
+      self.class.ship(id, params)
+    end
+
     class << self
       def update(attributes)
         hash = request.put('orders/create', { entity_key => attributes }).parse
         build(hash)
+      end
+
+      #
+      # Invoice an order
+      #
+      # Magento::Order.invoice(order_id)
+      #
+      # or
+      #
+      # Magento::Order.invoice(
+      #   order_id,
+      #   capture: false,
+      #   appendComment: true,
+      #   items: [{ order_item_id: 123, qty: 1 }], # pass items to partial invoice
+      #   comment: {
+      #     extension_attributes: { },
+      #     comment: "string",
+      #     is_visible_on_front: 0
+      #   },
+      #   notify: true
+      # )
+      #
+      # to complete [documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdinvoice#operation/salesInvoiceOrderV1ExecutePost)
+      #
+      # @return String: return the invoice id
+      def invoice(order_id, invoice_params=nil)
+        request.post("order/#{order_id}/invoice", invoice_params).parse
+      end
+
+      #
+      # Creates new Shipment for given Order.
+      #
+      # Magento::Order.ship(order_id)
+      #
+      # or
+      #
+      # Magento::Order.ship(
+      #   order_id,
+      #   capture: false,
+      #   appendComment: true,
+      #   items: [{ order_item_id: 123, qty: 1 }], # pass items to partial shipment
+      #   tracks: [
+      #     {
+      #       extension_attributes: { },
+      #       track_number: "string",
+      #       title: "string",
+      #       carrier_code: "string"
+      #     }
+      #   ]
+      #   notify: true
+      # )
+      #
+      # to complete [documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdship#operation/salesShipOrderV1ExecutePost)
+      #
+      # @return {String}: return the shipment id
+      def ship(order_id, shipment_params = nil)
+        request.post("order/#{order_id}/ship", shipment_params).parse
       end
     end
   end
