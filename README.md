@@ -320,7 +320,7 @@ invoice_id = order.invoice(
 ## Create refund for invoice
 
 ```rb
-Magento::Invoice.invoice(refund_id)
+Magento::Invoice.invoice(invoice_id)
 >> 12 # return refund id
 
 # or from instance
@@ -360,6 +360,48 @@ invoice.refund(
 
 [Complete Refund Documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundInvoiceV1ExecutePost)
 
+
+## Create offline refund for order
+
+```rb
+Magento::Order.refund(order_id)
+>> 12 # return refund id
+
+# or from instance
+
+order = Magento::Order.find(order_id)
+
+order.refund
+
+# you can pass parameters too
+
+order.refund(
+  items: [
+    {
+      extension_attributes: {},
+      order_item_id: 0,
+      qty: 0
+    }
+  ],
+  notify: true,
+  appendComment: true,
+  comment: {
+    extension_attributes: {},
+    comment: string,
+    is_visible_on_front: 0
+  },
+  arguments: {
+    shipping_amount: 0,
+    adjustment_positive: 0,
+    adjustment_negative: 0,
+    extension_attributes: {
+      return_to_stock_items: [0]
+    }
+  }
+)
+```
+
+[Complete Refund Documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundOrderV1ExecutePost)
 
 ## Other Invoice methods
 

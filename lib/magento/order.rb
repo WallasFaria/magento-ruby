@@ -33,6 +33,20 @@ module Magento
       self.class.invoice(id, params)
     end
 
+    
+    #
+    # Create offline refund for order
+    #
+    # order = Magento::Order.find(order_id)
+    #
+    # order.refund # or you can pass parameters
+    # order.invoice(notify: false) # See the refund class method for more information
+    #
+    # @return {Integer} return the refund id
+    def refund(refund_params = nil)
+      self.class.refund(id, refund_params)
+    end
+
     #
     # Creates new Shipment for given Order.
     #
@@ -82,6 +96,49 @@ module Magento
       # @return String: return the invoice id
       def invoice(order_id, invoice_params=nil)
         request.post("order/#{order_id}/invoice", invoice_params).parse
+      end
+
+      
+      #
+      # Create offline refund for order
+      #
+      # Magento::Order.refund(order_id)
+      #
+      # or
+      #
+      # Magento::Order.refund(
+      #   order_id,
+      #   items: [
+      #     {
+      #       extension_attributes: {},
+      #       order_item_id: 0,
+      #       qty: 0
+      #     }
+      #   ],
+      #   notify: true,
+      #   appendComment: true,
+      #   comment: {
+      #     extension_attributes: {},
+      #     comment: string,
+      #     is_visible_on_front: 0
+      #   },
+      #   arguments: {
+      #     shipping_amount: 0,
+      #     adjustment_positive: 0,
+      #     adjustment_negative: 0,
+      #     extension_attributes: {
+      #       return_to_stock_items: [
+      #         0
+      #       ]
+      #     }
+      #   }
+      # )
+      #
+      # to complete [documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundOrderV1ExecutePost)
+      #
+      # @return {Integer} return the refund id
+      def refund(order_id, refund_params = nil)
+        request.post("order/#{order_id}/refund", refund_params).parse
       end
 
       #

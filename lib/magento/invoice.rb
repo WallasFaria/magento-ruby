@@ -33,7 +33,7 @@ module Magento
     # invoice = Magento::Invoice.find(invoice_id)
     #
     # invoice.refund # or you can pass parameters
-    # invoice.invoice(notify: false) # See the refund class method for more information
+    # invoice.refund(isOnline: true) # See the refund class method for more information
     #
     # @return {Integer} return the refund id
     def refund(refund_params = nil)
