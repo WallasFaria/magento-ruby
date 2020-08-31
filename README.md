@@ -255,6 +255,10 @@ product.save
 # or
 
 product.update(name: 'Updated name')
+
+# or
+
+Magento::Product.update('sku-teste', name: 'Updated name')
 ```
 
 ### Delete
