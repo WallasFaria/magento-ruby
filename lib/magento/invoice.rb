@@ -92,7 +92,7 @@ module Magento
       #
       # or
       #
-      # Magento::Order.refund(
+      # Magento::Invoice.refund(
       #   invoice_id,
       #   items: [
       #     {
@@ -125,7 +125,7 @@ module Magento
       #
       # @return {Integer} return the refund id
       def refund(invoice_id, refund_params=nil)
-        request.post("invoice/#{order_id}/refund", invoice_params).parse
+        request.post("invoice/#{invoice_id}/refund", invoice_params).parse
       end
     end
   end
