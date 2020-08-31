@@ -9,12 +9,11 @@ module Magento
     def save
       self.class.update(send(self.class.primary_key), to_h)
     end
-
+    
     def update(attrs)
       raise "#{self.class.name} not saved" if send(self.class.primary_key).nil?
 
-      attrs.each { |key, value| send("#{key}=", value) }
-      save
+      self.class.update(send(self.class.primary_key), attrs)
     end
 
     def delete
