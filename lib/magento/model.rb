@@ -27,7 +27,8 @@ module Magento
     class << self
       extend Forwardable
 
-      def_delegators :query, :all, :page, :per, :page_size, :order, :select, :where
+      def_delegators :query, :all, :page, :per, :page_size, :order, :select, 
+                     :where, :first, :find_by, :count
 
       def find(id)
         hash = request.get("#{api_resource}/#{id}").parse

@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.9.2'
+gem 'magento', '~> 0.10.0'
 ```
 
 or run
@@ -68,6 +68,7 @@ Magento::Product.select(:id, :sku, :name, extension_attributes: [:website_ids, {
 #### Filters:
 
 ```rb
+Magento::Product.where(visibility: 4).all
 Magento::Product.where(name_like: 'IPhone%').all
 Magento::Product.where(price_gt: 100).all
 
@@ -128,6 +129,20 @@ products = Magento::Product.select(:sku, :name)
                            .page(1)
                            .page_size(5)
                            .all
+```
+
+## Get one
+
+```rb
+Magento::Order.where(increment_id: '000013457').first
+# or
+Magento::Order.find_by(increment_id: '000013457')
+```
+
+## Count
+```rb
+Magento::Order.count
+Magento::Order.where(status: :pending).count
 ```
 
 \* _same pattern to all models_

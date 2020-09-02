@@ -89,6 +89,18 @@ module Magento
       RecordCollection.from_magento_response(result, model: model, iterable_field: field)
     end
 
+    def first
+      page_size(1).page(1).all.first
+    end
+
+    def find_by(attributes)
+      where(attributes).first
+    end
+
+    def count
+      select(:id).page_size(1).page(1).all.total_count
+    end
+
     private
 
     attr_accessor :current_page, :filter_groups, :request, :sort_orders, :model, :fields
@@ -119,10 +131,11 @@ module Magento
 
     def parse_filter(key)
       patter = /(.*)_([a-z]+)$/
-      raise 'Invalid format' unless key.match(patter)
-      raise 'Condition not accepted' unless ACCEPTED_CONDITIONS.include?(key.match(patter)[2])
+      match = key.match(patter)
 
-      key.match(patter).to_a[1..2]
+      return match.to_a[1..2] if match && ACCEPTED_CONDITIONS.include?(match[2])
+
+      [key, 'eq']
     end
 
     def parse_value_filter(condition, value)
