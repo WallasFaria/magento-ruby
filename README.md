@@ -493,15 +493,6 @@ ___
 Magento::Product.search('tshort')
 ```
 
-### First result
-```rb
-Magento::Product.first
->> <Magento::Product @sku="some-sku" ...>
-
-Magento::Product.where(name_like: 'some name%').first
->> <Magento::Product @sku="some-sku" ...>
-```
-
 ### Last result
 ```rb
 Magento::Product.last
@@ -509,14 +500,6 @@ Magento::Product.last
 
 Magento::Product.where(name_like: 'some name%').last
 >> <Magento::Product @sku="some-sku" ...>
-```
-
-### Count result
-```rb
-Magento::Product.count
->> 7855
-Magento::Product.where(name_like: 'some name%').count
->> 15
 ```
 
 ### Tests
