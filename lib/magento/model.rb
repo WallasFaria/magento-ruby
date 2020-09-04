@@ -7,13 +7,17 @@ module Magento
     include Magento::ModelParser
 
     def save
-      self.class.update(send(self.class.primary_key), to_h)
+      self.class.update(send(self.class.primary_key), to_h) do |hash|
+        update_attributes(hash)
+      end
     end
     
     def update(attrs)
       raise "#{self.class.name} not saved" if send(self.class.primary_key).nil?
 
-      self.class.update(send(self.class.primary_key), attrs)
+      self.class.update(send(self.class.primary_key), attrs) do |hash|
+        update_attributes(hash)
+      end
     end
 
     def delete
@@ -22,6 +26,10 @@ module Magento
 
     def id
       @id || send(self.class.primary_key)
+    end
+
+    protected def update_attributes(hash)
+      ModelMapper.map_hash(self, hash)
     end
 
     class << self
@@ -48,7 +56,8 @@ module Magento
       def update(id, attributes)
         body = { entity_key => attributes }
         hash = request.put("#{api_resource}/#{id}", body).parse
-        build(hash)
+
+        block_given? ? yield(hash) : build(hash)
       end
 
       def api_resource
