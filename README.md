@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.10.0'
+gem 'magento', '~> 0.11.0'
 ```
 
 or run
@@ -32,6 +32,7 @@ Magento::Product
 Magento::Order
 Magento::Country
 Magento::Category
+Magento::Customer
 ```
 
 ## Get details
