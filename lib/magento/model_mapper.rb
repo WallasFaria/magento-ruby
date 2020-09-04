@@ -17,9 +17,12 @@ module Magento
     end
 
     def self.map_hash(model, values)
-      object = model.new
+      object = model.is_a?(Class) ? model.new : model
       values.each do |key, value|
-        object.singleton_class.instance_eval { attr_accessor key }
+        unless object.respond_to?(key) && object.respond_to?("#{key}=")
+          object.singleton_class.instance_eval { attr_accessor key }
+        end
+
         if value.is_a?(Hash)
           class_name = Magento.inflector.camelize(Magento.inflector.singularize(key))
           value = map_hash(Object.const_get("Magento::#{class_name}"), value)

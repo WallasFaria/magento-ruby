@@ -12,7 +12,9 @@ module Magento
     def update(attrs)
       raise "'entity_id' not found" if @entity_id.nil?
 
-      self.class.update(@entity_id, attrs)
+      self.class.update(@entity_id, attrs) do |hash|
+        update_attributes(hash)
+      end
     end
 
     def cancel
@@ -63,7 +65,7 @@ module Magento
       def update(entity_id, attributes)
         attributes[:entity_id] = entity_id
         hash = request.put('orders/create', { entity_key => attributes }).parse
-        build(hash)
+        block_given? ? yield(hash) : build(hash)
       end
 
       # @return {Boolean}
