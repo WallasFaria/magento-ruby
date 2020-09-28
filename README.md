@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.11.0'
+gem 'magento', '~> 0.12.0'
 ```
 
 or run
@@ -484,14 +484,44 @@ order.cancel # or
 Magento::Order.cancel(order_id)
 ```
 
-___
+## Generate Sales Rules and Coupons
 
-##TODO:
-
-### Search products
 ```rb
-Magento::Product.search('tshort')
+rule = Magento::SalesRule.create(
+  name: 'Discount name',
+  website_ids: [1],
+  customer_group_ids: [0,1,2,3],
+  uses_per_customer: 1,
+  is_active: true,
+  stop_rules_processing: true,
+  is_advanced: false,
+  sort_order: 0,
+  discount_amount: 100,
+  discount_step: 1,
+  apply_to_shipping: true,
+  times_used: 0,
+  is_rss: true,
+  coupon_type: 'specific',
+  use_auto_generation: true,
+  uses_per_coupon: 1
+)
+
+rule.generate_coupon(quantity: 1, length: 10)
 ```
+
+Renarate by class method
+```rb
+Magento::SalesRule.generate_coupon(
+  couponSpec: {
+    rule_id: 7,
+    quantity: 1,
+    length: 10
+  }
+)
+```
+see all params in:
+- [Magento docs Coupon](https://magento.redoc.ly/2.3.5-admin/tag/couponsgenerate#operation/salesRuleCouponManagementV1GeneratePost)
+- [Magento docs SalesRules](https://magento.redoc.ly/2.3.5-admin/tag/salesRules#operation/salesRuleRuleRepositoryV1SavePost)
 
 ### First result
 ```rb
@@ -502,6 +532,23 @@ Magento::Product.where(name_like: 'some name%').first
 >> <Magento::Product @sku="some-sku" ...>
 ```
 
+### Count result
+```rb
+Magento::Product.count
+>> 7855
+Magento::Product.where(name_like: 'some name%').count
+>> 15
+```
+
+___
+
+##TODO:
+
+### Search products
+```rb
+Magento::Product.search('tshort')
+```
+
 ### Last result
 ```rb
 Magento::Product.last
@@ -509,14 +556,6 @@ Magento::Product.last
 
 Magento::Product.where(name_like: 'some name%').last
 >> <Magento::Product @sku="some-sku" ...>
-```
-
-### Count result
-```rb
-Magento::Product.count
->> 7855
-Magento::Product.where(name_like: 'some name%').count
->> 15
 ```
 
 ### Tests
