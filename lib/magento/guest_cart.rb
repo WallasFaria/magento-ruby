@@ -32,6 +32,18 @@ module Magento
       self.class.payment_information(attributes)
     end
 
+    #
+    # Add a coupon by code to the current cart.
+    #
+    # Example
+    # cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+    # cart.add_coupon('COAU4HXE0I')
+    #
+    # @return Boolean: true on success, false otherwise
+    def add_coupon(coupon)
+      self.class.add_coupon(cart_id, coupon)
+    end
+
     class << self
       def create(load_cart_info: false)
         cart = build(cart_id: request.post(api_resource).parse)
@@ -63,6 +75,21 @@ module Magento
         url  = "#{api_resource}/#{id}/items"
         hash = request.post(url, attributes).parse
         Magento::ModelMapper.map_hash(Magento::Item, hash)
+      end
+
+      # 
+      # Add a coupon by code to a specified cart.
+      #
+      # Example
+      # Magento::GuestCart.add_coupon(
+      #   'aj8oUtY1Qi44Fror6UWVN7ftX1idbBKN',
+      #   'COAU4HXE0I'
+      # )
+      #
+      # @return Boolean: true on success, false otherwise
+      def add_coupon(id, coupon)
+        url = "#{api_resource}/#{id}/coupons/#{coupon}"
+        request.put(url, nil).parse
       end
     end
   end
