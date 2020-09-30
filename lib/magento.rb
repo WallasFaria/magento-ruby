@@ -38,12 +38,12 @@ module Magento
   self.token          = ENV['MAGENTO_TOKEN']
   self.store          = ENV['MAGENTO_STORE'] || :all
 
-  def self.with_config(utl: Magento.url, token: Magento.token, store: Magento.store)
+  def self.with_config(url: Magento.url, token: Magento.token, store: Magento.store)
     @old_url   = self.url
     @old_token = self.token
     @old_store = self.store
-    
-    self.url   = utl
+
+    self.url   = url
     self.token = token
     self.store = store
 
