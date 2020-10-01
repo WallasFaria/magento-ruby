@@ -308,6 +308,17 @@ cart.payment_information(
 >> "234575" # return the order id
 ```
 
+Add coupon to cart
+```rb
+cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+cart.add_coupon('COAU4HXE0I')
+# You can also use the class method
+Magento::GuestCart.add_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7', 'COAU4HXE0I')
+
+>> true # return true on success
+```
+
 ## Invoice an Order
 
 ```rb
@@ -522,6 +533,8 @@ Magento::SalesRule.generate_coupon(
 see all params in:
 - [Magento docs Coupon](https://magento.redoc.ly/2.3.5-admin/tag/couponsgenerate#operation/salesRuleCouponManagementV1GeneratePost)
 - [Magento docs SalesRules](https://magento.redoc.ly/2.3.5-admin/tag/salesRules#operation/salesRuleRuleRepositoryV1SavePost)
+
+See [how to add coupons to cart](#guestcart)
 
 ### First result
 ```rb
