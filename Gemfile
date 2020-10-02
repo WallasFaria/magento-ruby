@@ -2,5 +2,5 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in pagarme.gemspec
+# Specify your gem's dependencies in magento.gemspec
 gemspec

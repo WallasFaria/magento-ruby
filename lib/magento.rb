@@ -2,10 +2,12 @@
 
 require 'time'
 require 'dry/inflector'
+require 'active_support/core_ext/string/inflections'
 
 require_relative 'magento/errors'
 require_relative 'magento/request'
 require_relative 'magento/model_mapper'
+require_relative 'magento/params'
 require_relative 'magento/polymorphic_model'
 require_relative 'magento/model'
 require_relative 'magento/record_collection'
@@ -20,6 +22,7 @@ require_relative 'magento/guest_cart'
 require_relative 'magento/sales_rule'
 
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
+Dir[File.expand_path('magento/params/*.rb', __dir__)].map { |f| require f }
 
 module Magento
   class << self

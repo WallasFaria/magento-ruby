@@ -69,7 +69,7 @@ module Magento
 
     def save_request(method, url, body = nil)
       begin
-        body = body[:product].reject { |e| e == :media_gallery_entries }
+        body = body.symbolize_keys[:product].reject { |e| e == :media_gallery_entries }
       rescue StandardError
       end
 
