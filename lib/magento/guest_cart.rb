@@ -44,6 +44,17 @@ module Magento
       self.class.add_coupon(cart_id, coupon)
     end
 
+    # Delete cart's coupon
+    #
+    # Example:
+    # cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+    # cart.delete_coupon()
+    #
+    # @return Boolean: true on success, raise exception otherwise
+    def delete_coupon
+      self.class.delete_coupon(cart_id)
+    end
+
     class << self
       def create(load_cart_info: false)
         cart = build(cart_id: request.post(api_resource).parse)
@@ -90,6 +101,18 @@ module Magento
       def add_coupon(id, coupon)
         url = "#{api_resource}/#{id}/coupons/#{coupon}"
         request.put(url, nil).parse
+      end
+
+      #
+      # Delete a coupon from a specified cart.
+      #
+      # Example:
+      # Magento::GuestCart.delete_coupon('aj8oUtY1Qi44Fror6UWVN7ftX1idbBKN')
+      #
+      # @return Boolean: true on success, raise exception otherwise
+      def delete_coupon(id)
+        url = "#{api_resource}/#{id}/coupons"
+        request.delete(url).parse
       end
     end
   end
