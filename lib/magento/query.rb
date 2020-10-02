@@ -85,8 +85,11 @@ module Magento
 
     def all
       result = request.get("#{endpoint}?#{query_params}").parse
-      field  = model == Magento::Category ? 'children_data' : 'items'
-      RecordCollection.from_magento_response(result, model: model, iterable_field: field)
+      if model == Magento::Category
+        model.build(result)
+      else
+        RecordCollection.from_magento_response(result, model: model)
+      end
     end
 
     def first
