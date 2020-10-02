@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.12.0'
+gem 'magento', '~> 0.13.0'
 ```
 
 or run
@@ -50,6 +50,37 @@ Get customer by token
 
 ```rb
 Magento::Customer.find_by_token('user_token')
+```
+
+## Shurtcut to get custom attribute value by custom attribute code in product
+
+Exemple:
+
+```rb
+product.attr :description 
+# it is the same as
+product.custom_attributes.find { |a| a.attribute_code == 'description' }&.value
+
+# or
+product.description
+```
+
+when the custom attribute does not exists:
+
+```rb
+product.attr :special_price
+> nil
+
+product.special_price
+> NoMethodError: undefined method `special_price' for #<Magento::Product:...>
+```
+
+```rb
+product.respond_to? :special_price
+> false
+
+product.respond_to? :description
+> true
 ```
 
 ## Get List
