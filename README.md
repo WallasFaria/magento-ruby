@@ -350,6 +350,17 @@ Magento::GuestCart.add_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7', 'COAU4HXE0I')
 >> true # return true on success
 ```
 
+Delete coupon from cart
+```rb
+cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+cart.delete_coupon()
+# You can also use the class method
+Magento::GuestCart.delete_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+>> true # return true on success
+```
+
 ## Invoice an Order
 
 ```rb
@@ -551,7 +562,7 @@ rule = Magento::SalesRule.create(
 rule.generate_coupon(quantity: 1, length: 10)
 ```
 
-Renarate by class method
+Generate by class method
 ```rb
 Magento::SalesRule.generate_coupon(
   couponSpec: {
@@ -564,6 +575,8 @@ Magento::SalesRule.generate_coupon(
 see all params in:
 - [Magento docs Coupon](https://magento.redoc.ly/2.3.5-admin/tag/couponsgenerate#operation/salesRuleCouponManagementV1GeneratePost)
 - [Magento docs SalesRules](https://magento.redoc.ly/2.3.5-admin/tag/salesRules#operation/salesRuleRuleRepositoryV1SavePost)
+	
+See [how to add coupons to cart](#guestcart)
 
 ### First result
 ```rb
