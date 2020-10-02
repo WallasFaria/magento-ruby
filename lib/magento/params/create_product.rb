@@ -36,6 +36,7 @@ module Magento
       attribute :quantity,          Type::Coercible::Float
       attribute :featured,          Type::String.default('0'.freeze).enum('0', '1')
       attribute :is_qty_decimal,    Type::Bool.default(false)
+      attribute :manage_stock,      Type::Bool.default(true)
       attribute :category_ids,      Type::Array.of(Type::Integer).default([].freeze)
       attribute :images,            Type::Array.of(Type::Instance(CreateImage)).default([].freeze)
       attribute :website_ids,       Type::Array.of(Type::Integer).default([0].freeze)
@@ -87,7 +88,7 @@ module Magento
           use_config_enable_qty_inc: true,
           enable_qty_increments: true,
           use_config_manage_stock: true,
-          manage_stock: true,
+          manage_stock: manage_stock,
           low_stock_date: 'string',
           is_decimal_divided: is_qty_decimal,
           stock_status_changed_auto: 0
