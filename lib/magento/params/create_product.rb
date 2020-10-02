@@ -1,75 +1,58 @@
+require_relative 'create_image'
+require_relative 'create_custom_attribute'
+
 module Magento
   module Params
-    class CreateProduct
-      attr_accessor(
-        :sku,
-        :name,
-        :description,
-        :brand,
-        :type_id,
-        :price,
-        :special_price,
-        :attribute_set_id,
-        :status,
-        :visibility,
-        :weight,
-        :quantity,
-        :is_qty_decimal,
-        :category_ids,
-        :images,
-        :website_ids,
-        :custom_attributes
+    class CreateProduct < Dry::Struct
+      ProductTypes = Type::String.default('simple'.freeze).enum(
+        'simple',
+        'bundle',
+        'configurable',
+        'downloadable',
+        'grouped',
+        'Virtual'
       )
 
-      ###
-      # @param sku [String]
-      # @param name [String]
-      # @param price [Float]
-      # @param quantity [Float]
-      # @param brand [String]
-      # @param attribute_set_id [Integer]
-      # @param special_price: [Float]
-      # @param description: [String]
-      # @param status: [Integer] Default: 1, options: 1- Enabled, 2 - Disabled
-      # @param visibility: [Integer] Default: 4, options: 1 - Not Visible Individually, 2 - Catalog, 3 - Search, 4 - Catalog, Search.
-      # @param weight: [Float] Default: 0.3
-      # @param is_qty_decimal: [Boolean] Default: false
-      # @param images: [Array<Magento::Params::CreateImage>] Default: []
-      # @param website_ids: [Array<Integer] Default: [0]
-      # @param category_ids: [Array<String] Default: []
-      # @param attributes: [Array<Magento::Params::CreateAttribute>] Default: []
-      ###
-      def initialize(sku:, name:, price:, quantity:, brand:, attribute_set_id:, **params)
-        self.sku               = sku
-        self.name              = name
-        self.price             = price
-        self.quantity          = quantity
-        self.brand             = brand
-        self.attribute_set_id  = attribute_set_id
-        self.special_price     = params[:special_price]
-        self.description       = params[:description] || ''
-        self.type_id           = params[:type_id] || 'simple'
-        self.status            = params[:status] || 1
-        self.visibility        = params[:visibility] || 4
-        self.weight            = params[:weight] || 0.3
-        self.is_qty_decimal    = params[:is_qty_decimal] || false
-        self.images            = params[:images] || []
-        self.website_ids       = params[:website_ids] || [0]
-        self.category_ids      = params[:category_ids] || []
-        self.custom_attributes = params[:custom_attributes] || []
+      Visibilities = Type::String.default('catalog_and_search'.freeze).enum(
+        'not_visible_individually' => 1,
+        'catalog' => 1,
+        'search' => 3,
+        'catalog_and_search' => 4
+      )
+
+      Statuses = Type::String.default('enabled'.freeze).enum('enabled' => 1, 'disabled' => 2)
+
+      attribute :sku,               Type::String
+      attribute :name,              Type::String
+      attribute :description,       Type::String
+      attribute :brand,             Type::String
+      attribute :price,             Type::Coercible::Float
+      attribute :special_price,     Type::Float.optional.default(nil)
+      attribute :attribute_set_id,  Type::Integer
+      attribute :status,            Statuses
+      attribute :visibility,        Visibilities
+      attribute :type_id,           ProductTypes
+      attribute :weight,            Type::Coercible::Float
+      attribute :quantity,          Type::Coercible::Float
+      attribute :featured,          Type::String.default('0'.freeze).enum('0', '1')
+      attribute :is_qty_decimal,    Type::Bool.default(false)
+      attribute :category_ids,      Type::Array.of(Type::Integer).default([].freeze)
+      attribute :images,            Type::Array.of(Type::Instance(CreateImage)).default([].freeze)
+      attribute :website_ids,       Type::Array.of(Type::Integer).default([0].freeze)
+      attribute :custom_attributes, Type::Array.default([], shared: true) do
+        attribute :attribute_code,  Type::String
+        attribute :value,           Type::Coercible::String
       end
 
-      def add_custom_attribute(code, value)
-        custom_attributes << CreateAttribute.new(code: code, value: value)
-      end
+      alias orig_custom_attributes custom_attributes
 
       def to_h
         {
           sku: sku,
           name: name.titlecase,
           price: price,
-          status: status,
-          visibility: visibility,
+          status: Statuses.mapping[status],
+          visibility: Visibilities.mapping[visibility],
           type_id: type_id,
           weight: weight,
           attribute_set_id: attribute_set_id,
@@ -79,7 +62,7 @@ module Magento
             stock_item: stock
           },
           media_gallery_entries: images.map(&:to_h),
-          custom_attributes: attributes.map(&:to_h)
+          custom_attributes: custom_attributes.map(&:to_h)
         }
       end
 
@@ -111,16 +94,19 @@ module Magento
         }
       end
 
-      def attributes
-        list = [
-          CreateCustomAttribute.new(code: 'description', value: description),
-          CreateCustomAttribute.new(code: 'url_key', value: name.parameterize),
-          CreateCustomAttribute.new(code: 'product_brand', value: brand),
+      def custom_attributes
+        default_attributes = [
+          CustomAttribute.new(attribute_code: 'description', value: description),
+          CustomAttribute.new(attribute_code: 'url_key', value: name.parameterize ),
+          CustomAttribute.new(attribute_code: 'product_brand', value: brand ),
+          CustomAttribute.new(attribute_code: 'featured', value: featured)
         ]
 
-        list << CreateCustomAttribute.new(code: 'special_price', value: special_price) if special_price.to_f > 0
+        if special_price.to_f > 0
+          default_attributes << CustomAttribute.new(attribute_code: 'special_price', value: special_price.to_s)
+        end
 
-        list + custom_attributes
+        default_attributes + orig_custom_attributes
       end
 
       def categories

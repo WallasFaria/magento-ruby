@@ -3,6 +3,7 @@
 require 'time'
 require 'dry/inflector'
 require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/hash/keys'
 
 require_relative 'magento/errors'
 require_relative 'magento/request'

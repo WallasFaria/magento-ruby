@@ -5,26 +5,19 @@ require 'mini_magick'
 
 module Magento
   module Params
-    class CreateImage
+    class CreateImage < Dry::Struct
       VARIANTS = {
-        large: { size: '800x800', type: :image },
-        medium: { size: '300x300', type: :small_image },
-        small: { size: '100x100', type: :thumbnail }
-      }
+        'large'  => { size: '800x800', type: :image },
+        'medium' => { size: '300x300', type: :small_image },
+        'small'  => { size: '100x100', type: :thumbnail }
+      }.freeze
 
-      attr_accessor :path, :title, :position, :size, :disabled, :main
-
-      # @param title: [String]
-      # @param position: [Integer]
-      # @param path: [String]
-      def initialize(title:, position:, path:, size: :large, disabled: false, main: false)
-        self.title = title
-        self.position = position
-        self.path = path
-        self.size = size
-        self.disabled = disabled
-        self.main = main
-      end
+      attribute :title,    Type::String
+      attribute :path,     Type::String
+      attribute :position, Type::Integer
+      attribute :size,     Type::String.default('large').enum(*VARIANTS.keys)
+      attribute :disabled, Type::Bool.default(false)
+      attribute :main,     Type::Bool.default(false)
 
       def to_h
         {
@@ -43,10 +36,7 @@ module Magento
 
       def variants
         VARIANTS.keys.map do |size|
-          clone.tap do |image|
-            image.size = size
-            image.disabled = size != :large
-          end
+          CreateImage.new(attributes.merge(size: size, disabled: size != :large))
         end
       end
 

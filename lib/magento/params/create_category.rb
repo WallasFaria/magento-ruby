@@ -2,15 +2,11 @@
 
 module Magento
   module Params
-    class CreateCategoria
-      attr_accessor :name, :parent_id, :path, :is_active
-
-      def initialize(name:, is_active: true, parent_id: nil, path: nil)
-        self.name = name
-        self.is_active = is_active
-        self.parent_id = parent_id
-        self.path = path
-      end
+    class CreateCategoria < Dry::Struct
+      attribute :name,      Type::String
+      attribute :parent_id, Type::String.optional
+      attribute :path,      Type::String.optional
+      attribute :is_active, Type::Bool.default(true)
 
       def to_h
         {

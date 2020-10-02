@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'http', '~> 4.4'
   s.add_dependency 'dry-inflector', '~> 0.2.0'
-  s.add_dependency 'dry-struct', '~> 0.1.0'
+  s.add_dependency 'dry-struct'
   s.add_dependency 'activesupport'
   s.add_dependency 'mini_magick'
 end
