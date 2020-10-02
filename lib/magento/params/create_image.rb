@@ -36,7 +36,7 @@ module Magento
 
       def variants
         VARIANTS.keys.map do |size|
-          CreateImage.new(attributes.merge(size: size, disabled: size != :large))
+          CreateImage.new(attributes.merge(size: size, disabled: size != 'large'))
         end
       end
 

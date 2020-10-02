@@ -116,7 +116,7 @@ module Magento
           qty_increments: 0,
           use_config_enable_qty_inc: true,
           enable_qty_increments: true,
-          use_config_manage_stock: true,
+          use_config_manage_stock: manage_stock,
           manage_stock: manage_stock,
           low_stock_date: 'string',
           is_decimal_divided: is_qty_decimal,
