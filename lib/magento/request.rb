@@ -53,7 +53,7 @@ module Magento
 
       begin
         msg = resp.parse['message']
-        errors = resp.parse['errors']
+        errors = resp.parse['errors'] || resp.parse['parameters']
         if resp.parse['parameters'].is_a? Hash
           resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v }
         end
