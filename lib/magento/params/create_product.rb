@@ -54,7 +54,7 @@ module Magento
       attribute :sku,               Type::String
       attribute :name,              Type::String
       attribute :description,       Type::String
-      attribute :brand,             Type::String
+      attribute :brand,             Type::String.optional.default(nil)
       attribute :price,             Type::Coercible::Float
       attribute :special_price,     Type::Float.optional.default(nil)
       attribute :attribute_set_id,  Type::Integer
@@ -128,9 +128,10 @@ module Magento
         default_attributes = [
           CustomAttribute.new(attribute_code: 'description', value: description),
           CustomAttribute.new(attribute_code: 'url_key', value: name.parameterize ),
-          CustomAttribute.new(attribute_code: 'product_brand', value: brand ),
           CustomAttribute.new(attribute_code: 'featured', value: featured)
         ]
+
+        default_attributes.push(CustomAttribute.new(attribute_code: 'product_brand', value: brand)) if brand
 
         if special_price.to_f > 0
           default_attributes << CustomAttribute.new(attribute_code: 'special_price', value: special_price.to_s)
