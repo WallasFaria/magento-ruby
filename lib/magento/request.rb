@@ -37,6 +37,7 @@ module Magento
 
     def http_auth
       HTTP.auth("Bearer #{token}")
+          .timeout(connect: Magento.timeout, read: Magento.open_timeout)
     end
 
     def base_url
@@ -54,9 +55,7 @@ module Magento
       begin
         msg = resp.parse['message']
         errors = resp.parse['errors'] || resp.parse['parameters']
-        if resp.parse['parameters'].is_a? Hash
-          resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v }
-        end
+        resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v } if resp.parse['parameters'].is_a? Hash
       rescue StandardError
         msg = 'Failed access to the magento server'
         errors = []
