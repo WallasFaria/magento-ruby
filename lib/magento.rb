@@ -44,9 +44,7 @@ module Magento
   self.store          = ENV['MAGENTO_STORE'] || :all
 
   def self.with_config(url: Magento.url, token: Magento.token, store: Magento.store)
-    @old_url   = self.url
-    @old_token = self.token
-    @old_store = self.store
+    @old_config = [self.url, self.token, self.store]
 
     self.url   = url
     self.token = token
@@ -54,9 +52,7 @@ module Magento
 
     yield
   ensure
-    self.url   = @old_url
-    self.token = @old_token
-    self.store = @old_store
+    self.url, self.token, self.store = @old_config
   end
 
   def self.production?
