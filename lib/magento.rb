@@ -21,6 +21,7 @@ require_relative 'magento/order'
 require_relative 'magento/invoice'
 require_relative 'magento/guest_cart'
 require_relative 'magento/sales_rule'
+require_relative 'magento/import'
 
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
 Dir[File.expand_path('magento/params/*.rb', __dir__)].map { |f| require f }
