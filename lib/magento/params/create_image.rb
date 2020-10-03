@@ -49,6 +49,7 @@ module Magento
       def file
         @file ||= MiniMagick::Image.open(path).tap do |b|
           b.resize VARIANTS[size][:size]
+          b.format 'jpg'
           b.strip
         end
       end
