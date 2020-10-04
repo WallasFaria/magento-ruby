@@ -58,7 +58,7 @@ module Magento
     alias_method :per, :page_size
 
     def select(*fields)
-      fields = fields.map { |field| parse_field(field) }
+      fields = fields.map { |field| parse_field(field, root: true) }
 
       if model == Magento::Category
         self.fields = "children_data[#{fields.join(',')}]"
@@ -149,8 +149,8 @@ module Magento
       value
     end
 
-    def parse_field(value)
-      return verify_id(value) unless value.is_a? Hash
+    def parse_field(value, root: false)
+      return (root ? verify_id(value) : value) unless value.is_a? Hash
 
       value.map do |k, v|
         fields = v.is_a?(Array) ? v.map { |field| parse_field(field) } : [parse_field(v)]
