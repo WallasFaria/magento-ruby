@@ -28,10 +28,10 @@ module Magento
   
           product = Magento::Product.create(params)
   
-          puts "Produto criado: #{product.sku} => #{product.name}"
+          puts "Created product: #{product.sku} => #{product.name}"
         rescue => e
-          puts "Erro ao criado: #{product.sku} => #{product.name}"
-          puts " - Detalhes do erro: #{e}"
+          puts "Error on create: #{product.sku} => #{product.name}"
+          puts " - Error details: #{e}"
         end
       end
   
