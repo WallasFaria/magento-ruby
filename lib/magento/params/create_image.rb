@@ -59,6 +59,8 @@ module Magento
           end
           b.format 'jpg'
         end
+      rescue => e
+        raise "Erro ao ler imagem #{path}: #{e}"
       end
 
       def filename

@@ -1,9 +1,11 @@
+require 'uri'
+
 module Magento
   module Import
     class Product
-      def initialize(images_path, website_ids)
-        @images_path = images_path
+      def initialize(website_ids, images_folder = nil)
         @website_ids = website_ids
+        @image_finder = images_folder ? ImageFinder.new(images_folder) : nil
       end
   
       def import(products)
@@ -36,7 +38,9 @@ module Magento
       private
   
       def images(product)
-        image = find_image(product)
+        return [] unless product.main_image.to_s =~ URI::regexp || @image_finder
+
+        image = product.main_image || @image_finder.find_by_name(product.sku)
         return [] unless image
   
         Magento::Params::CreateImage.new(
@@ -46,15 +50,7 @@ module Magento
           main: true
         ).variants
       end
-  
-      def find_image(product)
-        prefix = "#{@images_path}/#{product.sku}"
-  
-        extensions = %w[jpg jpeg png webp]
-        extensions.map { |e| ["#{prefix}.#{e}", "#{prefix}.#{e.upcase}"] }.flatten
-                  .find { |file| File.exist?(file) }
-      end
-  
+
       def numeric?(value)
         !!(value.to_s =~ /^[\d]+$/)
       end
