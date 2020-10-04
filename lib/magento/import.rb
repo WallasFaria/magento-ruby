@@ -10,5 +10,9 @@ module Magento
       products = Category.new(products).associate
       Product.new(website_ids, images_folder).import(products)
     end
+
+    def self.get_csv_template
+      File.open(__dir__ + '/import/template/products.csv')
+    end
   end
 end
