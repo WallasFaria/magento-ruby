@@ -64,7 +64,7 @@ module Magento
       end
 
       def filename
-        title.parameterize
+        "#{title.parameterize}-#{VARIANTS[size]}.jpg"
       end
 
       def mini_type
