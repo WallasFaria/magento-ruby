@@ -41,7 +41,7 @@ module Magento
         params = Magento::Params::CreateCategoria.new(
           name: name,
           parent_id: parent.id,
-          url: "#{Magento.store}-#{parent.id}-#{name.parameterize}"
+          url: "#{Magento.configuration.store}-#{parent.id}-#{name.parameterize}"
         )
 
         Magento::Category.create(params.to_h).tap { |c| puts "Create: #{c.id} => #{c.name}" }
