@@ -92,6 +92,28 @@ module Magento
       end
     end
 
+    #
+    # Loop all products on each page, starting from the first to the last page
+    def find_each
+      if @model == Magento::Category
+        raise NoMethodError, 'undefined method `find_each` for Magento::Category'
+      end
+
+      @current_page = 1
+
+      loop do
+        redords = all
+
+        redords.each do |record|
+          yield record
+        end
+
+        break if redords.last_page?
+
+        @current_page = redords.next_page
+      end
+    end
+
     def first
       page_size(1).page(1).all.first
     end

@@ -35,7 +35,7 @@ module Magento
     class << self
       extend Forwardable
 
-      def_delegators :query, :all, :page, :per, :page_size, :order, :select, 
+      def_delegators :query, :all, :find_each, :page, :per, :page_size, :order, :select, 
                      :where, :first, :find_by, :count
 
       def find(id)
