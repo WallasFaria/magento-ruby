@@ -2,8 +2,8 @@ module Magento
   class Product < Model
     self.primary_key = :sku
 
-    def method_missing(m)
-      attr(m) || super
+    def method_missing(m, *params, &block)
+      attr(m) || super(m, *params, &block)
     end
 
     # returns custom_attribute value by custom_attribute code
