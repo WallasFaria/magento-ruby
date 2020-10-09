@@ -25,6 +25,25 @@ module Magento
       self.class.remove_media(sku, media_id)
     end
 
+    # 
+    # Add {price} on product {sku} for specified {customer_group_id}
+    # 
+    # Param {quantity} is the minimun amount to apply the price
+    # 
+    # product = Magento::Product.find(1)
+    # product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
+    # 
+    # OR
+    # 
+    # Magento::Product.add_tier_price(1, 3.99, quantity: 1, customer_group_id: :all)
+    # 
+    # @return {Boolean}
+    def add_tier_price(price, quantity: 1, customer_group_id: :all)
+      self.class.add_tier_price(
+        sku, price, quantity: quantity, customer_group_id: customer_group_id
+      )
+    end
+
     class << self
       alias_method :find_by_sku, :find
 
@@ -35,6 +54,17 @@ module Magento
       # returns true if the media was deleted
       def remove_media(sku, media_id)
         request.delete("products/#{sku}/media/#{media_id}").parse
+      end
+
+      # Add {price} on product {sku} for specified {customer_group_id}
+      # 
+      # Param {quantity} is the minimun amount to apply the price
+      # 
+      # @return {Boolean}
+      def add_tier_price(sku, price, quantity: 1, customer_group_id: :all)
+        request.post(
+          "products/#{sku}/group-prices/#{customer_group_id}/tiers/#{quantity}/price/#{price}"
+        ).parse
       end
     end
   end
