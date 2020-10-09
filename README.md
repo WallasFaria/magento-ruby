@@ -17,9 +17,11 @@ gem install magento
 ### Setup
 
 ```rb
-Magento.url   = 'https://yourstore.com'
-Magento.token = 'MAGENTO_API_KEY'
-Magento.store = :default # optional, Default is :all
+Magento.configure do |config|
+  config.url   = 'https://yourstore.com'
+  config.token = 'MAGENTO_API_KEY'
+  config.store = :default # optional, Default is :all
+end
 
 Magento.with_config(store: :other_store) do # accepts store, url and token parameters
   Magento::Product.find('sku')
