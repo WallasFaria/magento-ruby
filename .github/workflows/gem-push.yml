@@ -3,8 +3,6 @@ name: Ruby Gem
 on:
   push:
     branches: [ release ]
-  pull_request:
-    branches: [ release ]
 
 jobs:
   build:
