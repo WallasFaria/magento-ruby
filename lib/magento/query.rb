@@ -58,7 +58,7 @@ module Magento
     alias_method :per, :page_size
 
     def select(*fields)
-      fields = fields.map { |field| parse_field(field) }
+      fields = fields.map { |field| parse_field(field, root: true) }
 
       if model == Magento::Category
         self.fields = "children_data[#{fields.join(',')}]"
@@ -85,8 +85,33 @@ module Magento
 
     def all
       result = request.get("#{endpoint}?#{query_params}").parse
-      field  = model == Magento::Category ? 'children_data' : 'items'
-      RecordCollection.from_magento_response(result, model: model, iterable_field: field)
+      if model == Magento::Category
+        model.build(result)
+      else
+        RecordCollection.from_magento_response(result, model: model)
+      end
+    end
+
+    #
+    # Loop all products on each page, starting from the first to the last page
+    def find_each
+      if @model == Magento::Category
+        raise NoMethodError, 'undefined method `find_each` for Magento::Category'
+      end
+
+      @current_page = 1
+
+      loop do
+        redords = all
+
+        redords.each do |record|
+          yield record
+        end
+
+        break if redords.last_page?
+
+        @current_page = redords.next_page
+      end
     end
 
     def first
@@ -146,8 +171,8 @@ module Magento
       value
     end
 
-    def parse_field(value)
-      return verify_id(value) unless value.is_a? Hash
+    def parse_field(value, root: false)
+      return (root ? verify_id(value) : value) unless value.is_a? Hash
 
       value.map do |k, v|
         fields = v.is_a?(Array) ? v.map { |field| parse_field(field) } : [parse_field(v)]

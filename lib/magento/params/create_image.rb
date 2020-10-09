@@ -7,9 +7,9 @@ module Magento
   module Params
     class CreateImage < Dry::Struct
       VARIANTS = {
-        'large'  => { size: '800x800', type: :image },
-        'medium' => { size: '300x300', type: :small_image },
-        'small'  => { size: '100x100', type: :thumbnail }
+        'large'  => :image,
+        'medium' => :small_image,
+        'small'  => :thumbnail
       }.freeze
 
       attribute :title,    Type::String
@@ -30,7 +30,7 @@ module Magento
             "type": mini_type,
             "name": filename
           },
-          "types": main ? [VARIANTS[size][:type]] : []
+          "types": main ? [VARIANTS[size]] : []
         }
       end
 
@@ -48,13 +48,23 @@ module Magento
 
       def file
         @file ||= MiniMagick::Image.open(path).tap do |b|
-          b.resize VARIANTS[size][:size]
-          b.strip
+          b.resize(Magento.configuration.product_image.send(size + '_size'))
+          bigger_side = b.dimensions.max
+          b.combine_options do |c|
+            c.background '#FFFFFF'
+            c.alpha 'remove'
+            c.gravity 'center'
+            c.extent "#{bigger_side}x#{bigger_side}"
+            c.strip
+          end
+          b.format 'jpg'
         end
+      rescue => e
+        raise "Error on read image #{path}: #{e}"
       end
 
       def filename
-        title.parameterize
+        "#{title.parameterize}-#{VARIANTS[size]}.jpg"
       end
 
       def mini_type

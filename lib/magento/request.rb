@@ -5,11 +5,10 @@ require 'http'
 
 module Magento
   class Request
-    attr_reader :token, :store
+    attr_reader :config
 
-    def initialize(token: Magento.token, store: Magento.store)
-      @token = token
-      @store = store
+    def initialize(config: Magento.configuration)
+      @config = config
     end
 
     def get(resource)
@@ -36,12 +35,13 @@ module Magento
     private
 
     def http_auth
-      HTTP.auth("Bearer #{token}")
+      HTTP.auth("Bearer #{config.token}")
+          .timeout(connect: config.timeout, read: config.open_timeout)
     end
 
     def base_url
-      url = Magento.url.to_s.sub(%r{/$}, '')
-      "#{url}/rest/#{store}/V1"
+      url = config.url.to_s.sub(%r{/$}, '')
+      "#{url}/rest/#{config.store}/V1"
     end
 
     def url(resource)
@@ -53,10 +53,8 @@ module Magento
 
       begin
         msg = resp.parse['message']
-        errors = resp.parse['errors']
-        if resp.parse['parameters'].is_a? Hash
-          resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v }
-        end
+        errors = resp.parse['errors'] || resp.parse['parameters']
+        resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v } if resp.parse['parameters'].is_a? Hash
       rescue StandardError
         msg = 'Failed access to the magento server'
         errors = []

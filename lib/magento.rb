@@ -5,6 +5,7 @@ require 'dry/inflector'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/hash/keys'
 
+require_relative 'magento/configuration'
 require_relative 'magento/errors'
 require_relative 'magento/request'
 require_relative 'magento/model_mapper'
@@ -21,13 +22,16 @@ require_relative 'magento/order'
 require_relative 'magento/invoice'
 require_relative 'magento/guest_cart'
 require_relative 'magento/sales_rule'
+require_relative 'magento/import'
 
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
 Dir[File.expand_path('magento/params/*.rb', __dir__)].map { |f| require f }
 
 module Magento
   class << self
-    attr_accessor :url, :open_timeout, :timeout, :token, :store
+    attr_writer :configuration
+
+    delegate :url=, :token=, :store=, :open_timeout=, :timeout=, to: :configuration
 
     def inflector
       @inflector ||= Dry::Inflector.new do |inflections|
@@ -36,26 +40,24 @@ module Magento
     end
   end
 
-  self.url            = ENV['MAGENTO_URL']
-  self.open_timeout   = 30
-  self.timeout        = 90
-  self.token          = ENV['MAGENTO_TOKEN']
-  self.store          = ENV['MAGENTO_STORE'] || :all
+  def self.configuration
+    @configuration ||= Configuration.new
+  end
 
-  def self.with_config(url: Magento.url, token: Magento.token, store: Magento.store)
-    @old_url   = self.url
-    @old_token = self.token
-    @old_store = self.store
+  def self.reset
+    @configuration = Configuration.new
+  end
 
-    self.url   = url
-    self.token = token
-    self.store = store
+  def self.configure
+    yield(configuration)
+  end
 
+  def self.with_config(params)
+    @old_configuration = configuration
+    self.configuration = configuration.copy_with(**params)
     yield
   ensure
-    self.url   = @old_url
-    self.token = @old_token
-    self.store = @old_store
+    @configuration = @old_configuration
   end
 
   def self.production?

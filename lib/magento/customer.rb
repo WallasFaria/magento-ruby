@@ -33,7 +33,7 @@ module Magento
       end
 
       def find_by_token(token)
-        user_request = Request.new(token: token)
+        user_request = Request.new(config: Magento.configuration.copy_with(token: token))
         customer_hash = user_request.get('customers/me').parse
         build(customer_hash)
       end

@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.14.0'
+gem 'magento', '~> 0.19.0'
 ```
 
 or run
@@ -80,6 +80,23 @@ product.respond_to? :special_price
 > false
 
 product.respond_to? :description
+> true
+```
+
+## add tier price
+
+Add `price` on product `sku` for specified `customer_group_id`
+
+Param `quantity` is the minimun amount to apply the price
+
+```rb
+product = Magento::Product.find(1)
+product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
+> true
+
+# OR
+
+Magento::Product.add_tier_price(1, 3.99, quantity: 1, customer_group_id: :all)
 > true
 ```
 
