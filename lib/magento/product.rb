@@ -25,7 +25,6 @@ module Magento
       self.class.remove_media(sku, media_id)
     end
 
-    # 
     # Add {price} on product {sku} for specified {customer_group_id}
     # 
     # Param {quantity} is the minimun amount to apply the price
@@ -41,6 +40,22 @@ module Magento
     def add_tier_price(price, quantity:, customer_group_id: :all)
       self.class.add_tier_price(
         sku, price, quantity: quantity, customer_group_id: customer_group_id
+      )
+    end
+
+    # Remove tier price from product
+    # 
+    # product = Magento::Product.find(1)
+    # product.remove_tier_price(quantity: 1, customer_group_id: :all)
+    # 
+    # OR
+    # 
+    # Magento::Product.remove_tier_price(1, quantity: 1, customer_group_id: :all)
+    # 
+    # @return {Boolean}
+    def remove_tier_price(quantity:, customer_group_id: :all)
+      self.class.remove_tier_price(
+        sku, quantity: quantity, customer_group_id: customer_group_id
       )
     end
 
@@ -64,6 +79,15 @@ module Magento
       def add_tier_price(sku, price, quantity:, customer_group_id: :all)
         request.post(
           "products/#{sku}/group-prices/#{customer_group_id}/tiers/#{quantity}/price/#{price}"
+        ).parse
+      end
+
+      # Remove tier price from product
+      # 
+      # @return {Boolean}
+      def remove_tier_price(sku, quantity:, customer_group_id: :all)
+        request.delete(
+          "products/#{sku}/group-prices/#{customer_group_id}/tiers/#{quantity}"
         ).parse
       end
     end
