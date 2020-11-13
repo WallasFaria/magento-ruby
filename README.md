@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.21.0'
+gem 'magento', '~> 0.21.1'
 ```
 
 or run
@@ -619,14 +619,14 @@ Magento::Product.where(name_like: 'some name%').count
 ### Check whether a product is salable
 
 ```rb
-Inventoty.get_product_salable_quantity(sku: '4321', stock_id: 1)
+Inventory.get_product_salable_quantity(sku: '4321', stock_id: 1)
 >> 1
 ```
 
 ### Check whether a product is salable for a specified quantity
 
 ```rb
-Inventoty.is_product_salable_for_requested_qty(
+Inventory.is_product_salable_for_requested_qty(
   sku: '4321',
   stock_id: 1,
   requested_qty: 2
