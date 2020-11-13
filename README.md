@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.20.1'
+gem 'magento', '~> 0.21.0'
 ```
 
 or run
@@ -612,6 +612,35 @@ Magento::Product.count
 >> 7855
 Magento::Product.where(name_like: 'some name%').count
 >> 15
+```
+
+## Inventory
+
+### Check whether a product is salable
+
+```rb
+Inventoty.get_product_salable_quantity(sku: '4321', stock_id: 1)
+>> 1
+```
+
+### Check whether a product is salable for a specified quantity
+
+```rb
+Inventoty.is_product_salable_for_requested_qty(
+  sku: '4321',
+  stock_id: 1,
+  requested_qty: 2
+)
+>> OpenStruct {
+  :salable => false,
+  :errors => [
+    [0] {
+      "code" => "back_order-disabled",
+      "message" => "Backorders are disabled"
+    },
+    ...
+  ]
+}
 ```
 
 ___
