@@ -1,10 +1,10 @@
 module Magento
-  class Inventoty
+  class Inventory
     class << self
       # 
       # ==== Example
       #
-      #   Inventoty.is_product_salable_for_requested_qty(
+      #   Inventory.is_product_salable_for_requested_qty(
       #     sku: '4321',
       #     stock_id: 1,
       #     requested_qty: 2
