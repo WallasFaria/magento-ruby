@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.21.1'
+gem 'magento', '~> 0.22.0'
 ```
 
 or run
@@ -642,6 +642,24 @@ Inventory.is_product_salable_for_requested_qty(
   ]
 }
 ```
+
+## Update product stock
+
+```rb
+product = Magento::Product.find('sku')
+product.update_stock(qty: 12, is_in_stock: true)
+```
+
+or by class method
+
+```rb
+Magento::Product.update_stock(sku, id, {
+  qty: 12,
+  is_in_stock: true 
+})
+```
+
+see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
 
 ___
 

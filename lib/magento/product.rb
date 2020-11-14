@@ -6,6 +6,14 @@ module Magento
       attr(m) || super(m, *params, &block)
     end
 
+    def stock
+      extension_attributes&.stock_item
+    end
+
+    def stock_quantity
+      stock&.qty
+    end
+
     # returns custom_attribute value by custom_attribute code
     # return nil if custom_attribute is not present
     def attr(attribute_code)
@@ -44,6 +52,16 @@ module Magento
       )
     end
 
+    # Update product stock
+    #
+    #   product = Magento::Product.find('sku')
+    #   product.update_stock(qty: 12, is_in_stock: true)
+    #
+    # see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
+    def update_stock(attributes)
+      self.class.update_stock(sku, id, attributes)
+    end
+
     class << self
       alias_method :find_by_sku, :find
 
@@ -65,6 +83,18 @@ module Magento
         request.post(
           "products/#{sku}/group-prices/#{customer_group_id}/tiers/#{quantity}/price/#{price}"
         ).parse
+      end
+
+      # Update product stock
+      #
+      #   Magento::Product.update_stock(sku, id, {
+      #     qty: 12,
+      #     is_in_stock: true 
+      #   })
+      #
+      # see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
+      def update_stock(sku, id, attributes)
+        request.put("products/#{sku}/stockItems/#{id}", stockItem: attributes).parse
       end
     end
   end
