@@ -4,33 +4,33 @@ require_relative 'create_custom_attribute'
 module Magento
   module Params
     # Example
-    # 
-    # params = Magento::Params::CreateProduct.new(
-    #   sku: '556-teste-builder',
-    #   name: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
-    #   description: 'Descrição do produto',
-    #   brand: 'Coca-Cola',
-    #   price: 4.99,
-    #   special_price: 3.49,
-    #   quantity: 2,
-    #   weight: 0.3,
-    #   attribute_set_id: 4,
-    #   images: [
-    #     *Magento::Params::CreateImage.new(
-    #       path: 'https://urltoimage.com/image.jpg',
-    #       title: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
-    #       position: 0,
-    #       main: true
-    #     ).variants, # it's generate all variants thumbnail => '100x100', small_image => '300x300' and image => '800x800'
-    #     Magento::Params::CreateImage.new(
-    #       path: '/path/to/image.jpg',
-    #       title: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
-    #       position: 1
-    #     )
-    #   ]
-    # )
     #
-    # Magento::Product.create(params.to_h)
+    #   params = Magento::Params::CreateProduct.new(
+    #     sku: '556-teste-builder',
+    #     name: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
+    #     description: 'Descrição do produto',
+    #     brand: 'Coca-Cola',
+    #     price: 4.99,
+    #     special_price: 3.49,
+    #     quantity: 2,
+    #     weight: 0.3,
+    #     attribute_set_id: 4,
+    #     images: [
+    #       *Magento::Params::CreateImage.new(
+    #         path: 'https://urltoimage.com/image.jpg',
+    #         title: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
+    #         position: 0,
+    #         main: true
+    #       ).variants, # it's generate all variants thumbnail => '100x100', small_image => '300x300' and image => '800x800'
+    #       Magento::Params::CreateImage.new(
+    #         path: '/path/to/image.jpg',
+    #         title: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
+    #         position: 1
+    #       )
+    #     ]
+    #   )
+    #
+    #   Magento::Product.create(params.to_h)
     # 
     class CreateProduct < Dry::Struct
       ProductTypes = Type::String.default('simple'.freeze).enum(
