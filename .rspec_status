@@ -1,0 +1,5 @@
+example_id                      | status | run_time        |
+------------------------------- | ------ | --------------- |
+./spec/magento_spec.rb[1:1]     | passed | 0.00057 seconds |
+./spec/product_spec.rb[1:1:1:1] | passed | 0.00102 seconds |
+./spec/product_spec.rb[1:1:2:1] | passed | 0.00111 seconds |
