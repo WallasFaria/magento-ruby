@@ -4,6 +4,7 @@ require 'time'
 require 'dry/inflector'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/module/delegation'
 
 require_relative 'magento/configuration'
 require_relative 'magento/errors'
@@ -22,6 +23,7 @@ require_relative 'magento/order'
 require_relative 'magento/invoice'
 require_relative 'magento/guest_cart'
 require_relative 'magento/sales_rule'
+require_relative 'magento/inventory'
 require_relative 'magento/import'
 
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }

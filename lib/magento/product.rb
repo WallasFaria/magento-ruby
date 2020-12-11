@@ -6,10 +6,32 @@ module Magento
       attr(m) || super(m, *params, &block)
     end
 
+    def stock
+      extension_attributes&.stock_item
+    end
+
+    def stock_quantity
+      stock&.qty
+    end
+
     # returns custom_attribute value by custom_attribute code
     # return nil if custom_attribute is not present
     def attr(attribute_code)
       @custom_attributes&.find { |a| a.attribute_code == attribute_code.to_s }&.value
+    end
+
+    def set_custom_attribute(code, value)
+      @custom_attributes ||= []
+      attribute = @custom_attributes.find { |a| a.attribute_code == code.to_s }
+
+      if attribute
+        attribute.value = value
+      else
+        @custom_attributes << Magento::CustomAttribute.build(
+          attribute_code: code.to_s,
+          value: value
+        )
+      end
     end
 
     def respond_to?(attribute_code)
@@ -43,20 +65,27 @@ module Magento
       )
     end
 
-    # Remove tier price from product
-    # 
-    # product = Magento::Product.find(1)
-    # product.remove_tier_price(quantity: 1, customer_group_id: :all)
-    # 
-    # OR
-    # 
-    # Magento::Product.remove_tier_price(1, quantity: 1, customer_group_id: :all)
-    # 
+    #
+    # Remove tier price
+    #
+    #   product = Magento::Product.find(1)
+    #   product.remove_tier_price(quantity: 1, customer_group_id: :all)
+    #
     # @return {Boolean}
     def remove_tier_price(quantity:, customer_group_id: :all)
       self.class.remove_tier_price(
         sku, quantity: quantity, customer_group_id: customer_group_id
       )
+    end
+
+    # Update product stock
+    #
+    #   product = Magento::Product.find('sku')
+    #   product.update_stock(qty: 12, is_in_stock: true)
+    #
+    # see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
+    def update_stock(attributes)
+      self.class.update_stock(sku, id, attributes)
     end
 
     class << self
@@ -82,13 +111,27 @@ module Magento
         ).parse
       end
 
-      # Remove tier price from product
+      # Remove tier price
+      #
+      #   Product.remove_tier_price('sku', quantity: 1, customer_group_id: :all)
       # 
       # @return {Boolean}
       def remove_tier_price(sku, quantity:, customer_group_id: :all)
         request.delete(
           "products/#{sku}/group-prices/#{customer_group_id}/tiers/#{quantity}"
         ).parse
+      end
+
+      # Update product stock
+      #
+      #   Magento::Product.update_stock(sku, id, {
+      #     qty: 12,
+      #     is_in_stock: true 
+      #   })
+      #
+      # see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
+      def update_stock(sku, id, attributes)
+        request.put("products/#{sku}/stockItems/#{id}", stockItem: attributes).parse
       end
     end
   end

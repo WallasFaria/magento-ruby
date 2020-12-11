@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.19.0'
+gem 'magento', '~> 0.24.0'
 ```
 
 or run
@@ -614,6 +614,53 @@ Magento::Product.where(name_like: 'some name%').count
 >> 15
 ```
 
+## Inventory
+
+### Check whether a product is salable
+
+```rb
+Inventory.get_product_salable_quantity(sku: '4321', stock_id: 1)
+>> 1
+```
+
+### Check whether a product is salable for a specified quantity
+
+```rb
+Inventory.is_product_salable_for_requested_qty(
+  sku: '4321',
+  stock_id: 1,
+  requested_qty: 2
+)
+>> OpenStruct {
+  :salable => false,
+  :errors => [
+    [0] {
+      "code" => "back_order-disabled",
+      "message" => "Backorders are disabled"
+    },
+    ...
+  ]
+}
+```
+
+## Update product stock
+
+```rb
+product = Magento::Product.find('sku')
+product.update_stock(qty: 12, is_in_stock: true)
+```
+
+or by class method
+
+```rb
+Magento::Product.update_stock(sku, id, {
+  qty: 12,
+  is_in_stock: true 
+})
+```
+
+see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
+
 ___
 
 ##TODO:
@@ -633,3 +680,14 @@ Magento::Product.where(name_like: 'some name%').last
 ```
 
 ### Tests
+
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/WallasFaria/nfce_crawler.

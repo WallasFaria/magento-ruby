@@ -7,7 +7,6 @@
 coverage
 InstalledFiles
 lib/bundler/man
-pkg
 rdoc
 spec/reports
 test/tmp
@@ -26,3 +25,6 @@ test/vcr_cassettes
 .vscode
 .byebug_history
 /manual_test
+
+# rspec failure tracking
+.rspec_status

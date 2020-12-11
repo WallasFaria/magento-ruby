@@ -9,7 +9,7 @@ module Magento
       end
 
       def get_products
-        @csv[1..].map do |row|
+        @csv[1..-1].map do |row|
           OpenStruct.new({
             name: row[0],
             sku: row[1],
