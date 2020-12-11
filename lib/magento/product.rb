@@ -20,6 +20,20 @@ module Magento
       @custom_attributes&.find { |a| a.attribute_code == attribute_code.to_s }&.value
     end
 
+    def set_custom_attribute(code, value)
+      @custom_attributes ||= []
+      attribute = @custom_attributes.find { |a| a.attribute_code == code.to_s }
+
+      if attribute
+        attribute.value = value
+      else
+        @custom_attributes << Magento::CustomAttribute.build(
+          attribute_code: code.to_s,
+          value: value
+        )
+      end
+    end
+
     def respond_to?(attribute_code)
       super || @custom_attributes&.any? { |a| a.attribute_code == attribute_code.to_s }
     end
