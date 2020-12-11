@@ -4,6 +4,7 @@ require 'time'
 require 'dry/inflector'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/module/delegation'
 
 require_relative 'magento/configuration'
 require_relative 'magento/errors'
