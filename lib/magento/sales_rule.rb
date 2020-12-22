@@ -27,6 +27,10 @@ module Magento
       def generate_coupon(attributes)
         request.post('coupons/generate', attributes).parse
       end
+
+      protected def query
+        Query.new(self, api_resource: 'salesRules/search')
+      end
     end
   end
 end

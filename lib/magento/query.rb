@@ -23,7 +23,7 @@ module Magento
       'to'       # The end of a range. Must be used with from
     ].freeze
 
-    def initialize(model, request: Request.new)
+    def initialize(model, request: Request.new, api_resource: nil)
       @model = model
       @request = request
       @filter_groups = nil
@@ -31,6 +31,7 @@ module Magento
       @page_size = 50
       @sort_orders = nil
       @fields = nil
+      @endpoint = api_resource || model.api_resource
     end
 
     def where(attributes)
@@ -131,7 +132,7 @@ module Magento
     attr_accessor :current_page, :filter_groups, :request, :sort_orders, :model, :fields
 
     def endpoint
-      model.api_resource
+      @endpoint
     end
 
     def verify_id(field)
