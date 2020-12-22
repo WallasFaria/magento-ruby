@@ -133,6 +133,14 @@ module Magento
       def update_stock(sku, id, attributes)
         request.put("products/#{sku}/stockItems/#{id}", stockItem: attributes).parse
       end
+
+      def create_links(sku, product_links)
+        request.post("products/#{sku}/links", { items: product_links })
+      end
+
+      def remove_link(sku, link_type:, linked_product_sku:)
+        request.delete("products/#{sku}/links/#{link_type}/#{linked_product_sku}")
+      end
     end
   end
 end
