@@ -5,7 +5,7 @@
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.26.0'
+gem 'magento', '~> 0.26.1'
 ```
 
 or run
