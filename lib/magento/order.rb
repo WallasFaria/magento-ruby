@@ -61,6 +61,10 @@ module Magento
       self.class.ship(id, params)
     end
 
+    def send_email
+      self.class.send_email(id)
+    end
+
     class << self
       def update(entity_id, attributes)
         attributes[:entity_id] = entity_id
@@ -171,6 +175,10 @@ module Magento
       # @return {String}: return the shipment id
       def ship(order_id, shipment_params = nil)
         request.post("order/#{order_id}/ship", shipment_params).parse
+      end
+
+      def send_email(order_id)
+        request.post("orders/#{order_id}/emails").parse
       end
     end
   end
