@@ -1,7 +1,60 @@
-# Magento Ruby library
+# Magento 2 Ruby library
 
-## Install
+Ruby library to consume the magento 2 api
 
+> Testado na versão 2.3 do magento
+
+- [Getting started](#getting-started)
+  - [Install](#install)
+  - [Setup](#setup)
+- [Model common methods](#model-common-methods)
+  - [find](#find)
+  - [find_by](#find_by)
+  - [first](#first)
+  - [count](#count)
+  - [all](#count)
+  - [create](#create)
+  - [update](#update)
+  - [delete](#delete)
+- [Search criteria](#search-criteria)
+  - [Select fields](#select-fields)
+  - [Filters](#filters)
+  - [Sort order](#sort-order)
+  - [Pagination](#pagination)
+- [Record Collection](#record-collection)
+- [Product](#product)
+  - [Shurtcuts](#shurtcut)
+  - [Update stock](#update-stock)
+  - [Create](#create-a-product)
+  - [Update](#update-a-product)
+  - [Delete](#delete-a-product)
+- [Category](#category)
+- [Order](#order)
+  - [Invoice](#invoice-an-order)
+  - [Offline Refund](#create-offline-refund-for-order)
+  - [Creates new Shipment](#creates-new-shipment-for-given-order)
+  - [Cancel](#cancel-an-order)
+- [Invoice](#invoice)
+  - [Refund](#create-refund-for-invoice)
+  - [Capture](#capture-invoice)
+  - [Void](#void-invoice)
+  - [Send email](#send-email-invoice)
+  - [Get comments](#get-invoice-comments)
+- [Sales Rule](#sales-rule)
+  - [Generate Sales Rules and Coupons](#generate-sales-rules-and-coupons)
+- [Customer](#customer)
+  - [Find by token](#get-customer-by-token)
+- [Guest cart](#guest-cart)
+  - [Payment information](#payment-information)
+  - [Add Coupon](#add-coupon-to-guest-cart)
+  - [Remove Coupon](#remove-coupon-from-guest-cart)
+- [Inventory](#invoice)
+  - [Check whether a product is salable](#check-whether-a-product-is-salable)
+  - [Check whether a product is salable for a specified quantity](#check-whether-a-product-is-salable-for-a-specified-quantity)
+- [Country](#country)
+## Getting started
+
+### Install
 Add in your Gemfile
 
 ```rb
@@ -28,87 +81,179 @@ Magento.with_config(store: :other_store) do # accepts store, url and token param
 end
 ```
 
-## Models
-```rb
-Magento::Product
-Magento::Order
-Magento::Country
-Magento::Category
-Magento::Customer
-```
+## Model common methods
 
-## Get details
+All classes that inherit from `Magento::Model` have the methods described below
 
+### `find`
+
+Get resource details with the `find` method
+
+Example:
 ```rb
 Magento::Product.find('sku-test')
 Magento::Order.find(25)
 Magento::Country.find('BR')
 ```
-\* _same pattern to all models_
 
-**Outside pattern**
+### `find_by`
 
-Get customer by token
+Returns the first resource found based on the argument passed
 
+Example:
 ```rb
-Magento::Customer.find_by_token('user_token')
+Magento::Product.find_by(name: 'Some product name')
+Magento::Customer.find_by(email: 'customer@email.com')
 ```
 
-## Shurtcut to get custom attribute value by custom attribute code in product
+### `first`
 
-Exemple:
+Returns the first resource found for the [search criteria](#search-criteria)
+
+Example:
+```rb
+Magento::Order.where(grand_total_gt: 100).first
+```
+
+### `count`
+
+Returns the total amount of the resource, also being able to use it based on the [search criteria](#search-criteria)
+
+Example:
+```rb
+
+Magento::Order.count
+>> 1500
+
+Magento::Order.where(status: :pending).count
+>> 48
+```
+
+### `all`
+
+Used to get a list of a specific resource based on the [search criteria](#search-criteria).
+
+Returns a [Record Collection](#record-collection)
+
+Example:
+```rb
+# Default search criteria:
+#  page: 1
+#  page_size: 50
+Magento::Product.all
+
+Magento::Product
+  .order(created_at: :desc)
+  .page_size(10)
+  .all
+```
+
+### `create`
+
+Creates a new resource based on past attributes.
+
+Consult the magento documentation for available attributes for each resource:
+
+Documentation links:
+- [Product](#)
+- [Category](#)
+- [Order](#)
+- [Customer](#)
+
+Example:
+```rb
+Magento::Order.create(
+  customer_firstname: '',
+  customer_lastname: '',
+  customer_email: '',
+  # others attrbutes ...,
+  items: [
+    {
+      sku: '',
+      price: '',
+      qty_ordered: 1,
+      # others attrbutes ...,
+    }
+  ],
+  billing_address: {
+    # attrbutes...
+  },
+  payment: {
+    # attrbutes...
+  },
+  extension_attributes: {
+    # attrbutes...
+  }
+)
+```
+
+#### `update`
+
+Update a resource based on past attributes.
+
+Consult the magento documentation for available attributes for each resource:
+
+Documentation links:
+- [Product](#)
+- [Category](#)
+- [Order](#)
+- [Customer](#)
+
+Example:
 
 ```rb
-product.attr :description 
-# it is the same as
-product.custom_attributes.find { |a| a.attribute_code == 'description' }&.value
+Magento::Product.update('sku-teste', name: 'Updated name')
+
+# or by instance method
+
+product = Magento::Product.find('sku-teste')
+
+product.update(name: 'Updated name')
+
+# or save after changing the object
+
+product.name = 'Updated name'
+product.save
+```
+
+### `delete`
+
+Delete a especific resource.
+
+```rb
+Magento::Product.delete('sku-teste')
 
 # or
-product.description
+product = Magento::Product.find('sku-teste')
+product.delete
 ```
 
-when the custom attribute does not exists:
+## Search Criteria
+
+They are methods used to assemble the search parameters
+
+All methods return an instance of the `Magento::Query` class. The request is only executed after calling method `all`.
+
+Example:
 
 ```rb
-product.attr :special_price
-> nil
+customers = Magento::Customer
+  .where(dob_gt: '1995-01-01')
+  .order(:dob)
+  .all
 
-product.special_price
-> NoMethodError: undefined method `special_price' for #<Magento::Product:...>
+# or
+
+query = Magento::Customer.where(dob_gt: '1995-01-01')
+
+query = query.order(:dob) if ordered_by_date_of_birth
+
+customers = query.all
 ```
 
-```rb
-product.respond_to? :special_price
-> false
+### Select fields:
 
-product.respond_to? :description
-> true
-```
-
-## add tier price
-
-Add `price` on product `sku` for specified `customer_group_id`
-
-Param `quantity` is the minimun amount to apply the price
-
-```rb
-product = Magento::Product.find(1)
-product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
-> true
-
-# OR
-
-Magento::Product.add_tier_price(1, 3.99, quantity: 1, customer_group_id: :all)
-> true
-```
-
-## Get List
-
-```rb
-Magento::Product.all
-```
-
-#### Select fields:
+Example:
 ```rb
 Magento::Product.select(:id, :sku, :name).all
 Magento::Product.select(:id, :sku, :name, extension_attributes: :category_links).all
@@ -116,8 +261,9 @@ Magento::Product.select(:id, :sku, :name, extension_attributes: [:category_links
 Magento::Product.select(:id, :sku, :name, extension_attributes: [:website_ids, { category_links: :category_id }]).all
 ```
 
-#### Filters:
+### Filters
 
+Example:
 ```rb
 Magento::Product.where(visibility: 4).all
 Magento::Product.where(name_like: 'IPhone%').all
@@ -131,6 +277,7 @@ Magento::Product.where(price_gt: 10)
 Magento::Product.where(price_lt: 1, price_gt: 100).all
 
 Magento::Order.where(status_in: [:canceled, :complete]).all
+
 ```
 
 | Condition | Notes |
@@ -153,56 +300,37 @@ Magento::Order.where(status_in: [:canceled, :complete]).all
 |to         | The end of a range. Must be used with from |
 
 
-#### SortOrder:
+### Sort Order
 
+Example:
 ```rb
 Magento::Product.order(:sku).all
 Magento::Product.order(sku: :desc).all
 Magento::Product.order(status: :desc, name: :asc).all
 ```
 
-#### Pagination:
+### Pagination:
 
+Example:
 ```rb
 # Set page and quantity per page
-Magento::Product.page(1)       # Current page, Default is 1
-                .page_size(25) # Default is 50
-                .all
+Magento::Product
+  .page(1)       # Current page, Default is 1
+  .page_size(25) # Default is 50
+  .all
 
 # per is an alias to page_size
 Magento::Product.per(25).all
 ```
 
-#### Example of several options together:
-```rb
-products = Magento::Product.select(:sku, :name)
-                           .where(name_like: 'biscoito%')
-                           .page(1)
-                           .page_size(5)
-                           .all
-```
-
-## Get one
-
-```rb
-Magento::Order.where(increment_id: '000013457').first
-# or
-Magento::Order.find_by(increment_id: '000013457')
-```
-
-## Count
-```rb
-Magento::Order.count
-Magento::Order.where(status: :pending).count
-```
-
-\* _same pattern to all models_
-
-### Response
+## Record Collection
 
 The `all` method retorns a `Magento::RecordCollection` instance
 
+Example:
 ```rb
+products = Magento::Product.all
+
 products.first
 >> <Magento::Product @sku="2100", @name="Biscoito Piraque Salgadinho 100G">
 
@@ -282,62 +410,63 @@ All Methods:
 :empty?
 ```
 
-## Create
+**Outside pattern**
+
+Get customer by token
 
 ```rb
-Magento::Order.create(
-  customer_firstname: '',
-  customer_lastname: '',
-  customer_email: '',
-  # others attrbutes ...,
-  items: [
-    {
-      sku: '',
-      price: '',
-      qty_ordered: 1,
-      # others attrbutes ...,
-    }
-  ],
-  billing_address: {
-    # attrbutes...
-  },
-  payment: {
-    # attrbutes...
-  },
-  extension_attributes: {
-    # attrbutes...
-  }
-)
+Magento::Customer.find_by_token('user_token')
 ```
 
-### Update
+## Shurtcut to get custom attribute value by custom attribute code in product
+
+Exemple:
 
 ```rb
-product = Magento::Product.find('sku-teste')
-
-product.name = 'Updated name'
-product.save
-
-# or
-
-product.update(name: 'Updated name')
+product.attr :description 
+# it is the same as
+product.custom_attributes.find { |a| a.attribute_code == 'description' }&.value
 
 # or
-
-Magento::Product.update('sku-teste', name: 'Updated name')
+product.description
 ```
 
-### Delete
+when the custom attribute does not exists:
 
 ```rb
-product = Magento::Product.find('sku-teste')
+product.attr :special_price
+> nil
 
-product.delete
-
-# or
-
-Magento::Product.delete('sku-teste')
+product.special_price
+> NoMethodError: undefined method `special_price' for #<Magento::Product:...>
 ```
+
+```rb
+product.respond_to? :special_price
+> false
+
+product.respond_to? :description
+> true
+```
+
+## add tier price
+
+Add `price` on product `sku` for specified `customer_group_id`
+
+Param `quantity` is the minimun amount to apply the price
+
+```rb
+product = Magento::Product.find(1)
+product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
+> true
+
+# OR
+
+Magento::Product.add_tier_price(1, 3.99, quantity: 1, customer_group_id: :all)
+> true
+```
+
+\* _same pattern to all models_
 
 ## GuestCart
 
