@@ -26,8 +26,13 @@ require_relative 'magento/sales_rule'
 require_relative 'magento/inventory'
 require_relative 'magento/import'
 
+require_relative 'magento/params/create_custom_attribute'
+require_relative 'magento/params/create_image'
+require_relative 'magento/params/create_category'
+require_relative 'magento/params/create_product'
+require_relative 'magento/params/create_product_link'
+
 Dir[File.expand_path('magento/shared/*.rb', __dir__)].map { |f| require f }
-Dir[File.expand_path('magento/params/*.rb', __dir__)].map { |f| require f }
 
 module Magento
   class << self
