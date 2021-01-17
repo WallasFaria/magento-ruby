@@ -256,9 +256,39 @@ customers = query.all
 Example:
 ```rb
 Magento::Product.select(:id, :sku, :name).all
-Magento::Product.select(:id, :sku, :name, extension_attributes: :category_links).all
-Magento::Product.select(:id, :sku, :name, extension_attributes: [:category_links, :website_ids]).all
-Magento::Product.select(:id, :sku, :name, extension_attributes: [:website_ids, { category_links: :category_id }]).all
+
+Magento::Product
+  .select(
+    :id,
+    :sku,
+    :name,
+    extension_attributes: :category_links
+  )
+  .all
+
+Magento::Product
+  .select(
+    :id,
+    :sku,
+    :name,
+    extension_attributes: [
+      :category_links,
+      :website_ids
+    ]
+  )
+  .all
+  
+Magento::Product
+  .select(
+    :id,
+    :sku,
+    :name,
+    extension_attributes: [
+      { category_links: :category_id },
+      :website_ids
+    ]
+  )
+  .all
 ```
 
 ### Filters
