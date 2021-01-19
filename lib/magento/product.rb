@@ -134,6 +134,18 @@ module Magento
         request.put("products/#{sku}/stockItems/#{id}", stockItem: attributes).parse
       end
 
+      # Creates link to product
+      #
+      #   Product.create_links('product-sku', [
+      #     {
+      #       link_type: 'upsell',
+      #       linked_product_sku: 'linked_product_sku',
+      #       linked_product_type: 'simple',
+      #       position: position,
+      #       sku: 'product-sku'
+      #     }
+      #   ])
+      #
       def create_links(sku, product_links)
         request.post("products/#{sku}/links", { items: product_links })
       end
