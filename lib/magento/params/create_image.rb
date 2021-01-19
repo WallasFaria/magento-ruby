@@ -5,6 +5,17 @@ require 'mini_magick'
 
 module Magento
   module Params
+
+    # Example
+    #
+    #   Magento::Params::CreateImage.new(
+    #     title: 'Some image',
+    #     path: '/path/to/image.jpg',
+    #     position: 1,
+    #     size: 'large', # default large, options medium and small
+    #     disabled: false, # default false
+    #     main: true # default false
+    #   )
     class CreateImage < Dry::Struct
       VARIANTS = {
         'large'  => :image,
