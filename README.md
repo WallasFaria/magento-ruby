@@ -4,10 +4,11 @@ Ruby library to consume the magento 2 api
 
 > Testado na versão 2.3 do magento
 
-- [Getting started](#getting-started)
+[Getting started](#getting-started)
   - [Install](#install)
   - [Setup](#setup)
-- [Model common methods](#model-common-methods)
+
+[Model common methods](#model-common-methods)
   - [find](#find)
   - [find_by](#find_by)
   - [first](#first)
@@ -16,13 +17,17 @@ Ruby library to consume the magento 2 api
   - [create](#create)
   - [update](#update)
   - [delete](#delete)
-- [Search criteria](#search-criteria)
+
+[Search criteria](#search-criteria)
   - [Select fields](#select-fields)
   - [Filters](#filters)
   - [Sort order](#sort-order)
   - [Pagination](#pagination)
 - [Record Collection](#record-collection)
-- [Product](#product)
+
+**Additional methods**
+
+[Product](#product)
   - [Shurtcuts](#shurtcuts)
   - [Update stock](#update-stock)
   - [Add media](#add-media-to-product)
@@ -31,33 +36,41 @@ Ruby library to consume the magento 2 api
   - [Remove tier price](#remove-tier-price-from-product)
   - [Create links](#create-links-to-product)
   - [Remove link](#remove-link-from-product)
-  - [Create](#create-a-product)
-  - [Update](#update-a-product)
-  - [Delete](#delete-a-product)
-- [Category](#category)
-- [Order](#order)
+
+[Order](#order)
   - [Invoice](#invoice-an-order)
   - [Offline Refund](#create-offline-refund-for-order)
   - [Creates new Shipment](#creates-new-shipment-for-given-order)
   - [Cancel](#cancel-an-order)
-- [Invoice](#invoice)
+
+[Invoice](#invoice)
   - [Refund](#create-refund-for-invoice)
-  - [Capture](#capture-invoice)
-  - [Void](#void-invoice)
-  - [Send email](#send-email-invoice)
+  - [Capture](#capture-an-invoice)
+  - [Void](#void-an-invoice)
+  - [Send email](#send-invoice-email)
   - [Get comments](#get-invoice-comments)
-- [Sales Rule](#sales-rule)
+
+[Sales Rule](#sales-rule)
   - [Generate Sales Rules and Coupons](#generate-sales-rules-and-coupons)
-- [Customer](#customer)
+
+[Customer](#customer)
   - [Find by token](#get-customer-by-token)
-- [Guest cart](#guest-cart)
+
+[Guest cart](#guest-cart)
   - [Payment information](#payment-information)
   - [Add Coupon](#add-coupon-to-guest-cart)
   - [Remove Coupon](#remove-coupon-from-guest-cart)
-- [Inventory](#invoice)
+
+[Inventory](#invoice)
   - [Check whether a product is salable](#check-whether-a-product-is-salable)
   - [Check whether a product is salable for a specified quantity](#check-whether-a-product-is-salable-for-a-specified-quantity)
-- [Country](#country)
+
+**Helper classes**
+
+- [Create product params](#create-product-params)
+- [Create product image params](#create-product-image-params)
+- [Import products from csv file](#import-products-from-csv-file)
+
 ## Getting started
 
 ### Install
@@ -500,6 +513,13 @@ Update product stock
 ```rb
 product = Magento::Product.find('sku')
 product.update_stock(qty: 12, is_in_stock: true)
+
+# or through the class method
+
+Magento::Product.update_stock('sku', id, {
+  qty: 12,
+  is_in_stock: true 
+})
 ```
 
 > see all available attributes in: [Magento Rest Api Documentation](https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId)
@@ -626,49 +646,11 @@ Product.remove_link(
 )
 ```
 
-## GuestCart
+## Order
 
-Set payment information to finish the order
-```rb
-cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+### Invoice an Order
 
-# or use "build" to not request information from the magento API
-cart = Magento::GuestCart.build(
-  cart_id: 'aj8oUtY1Qi44Fror6UWVN7ftX1idbBKN'
-)
-
-cart.payment_information(
-  email: 'customer@gmail.com',
-  payment: { method: 'cashondelivery' }
-)
-
->> "234575" # return the order id
-```
-
-Add coupon to cart
-```rb
-cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
-
-cart.add_coupon('COAU4HXE0I')
-# You can also use the class method
-Magento::GuestCart.add_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7', 'COAU4HXE0I')
-
->> true # return true on success
-```
-
-Delete coupon from cart
-```rb
-cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
-
-cart.delete_coupon()
-# You can also use the class method
-Magento::GuestCart.delete_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
-
->> true # return true on success
-```
-
-## Invoice an Order
-
+Example:
 ```rb
 Magento::Order.invoice(order_id)
 >> 25 # return incoice id
@@ -696,8 +678,99 @@ invoice_id = order.invoice(
 
 [Complete Invoice Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdinvoice#operation/salesInvoiceOrderV1ExecutePost)
 
-## Create refund for invoice
+### Create offline refund for order
 
+Example:
+```rb
+Magento::Order.refund(order_id)
+>> 12 # return refund id
+
+# or from instance
+
+order = Magento::Order.find(order_id)
+
+order.refund
+
+# you can pass parameters too
+
+order.refund(
+  items: [
+    {
+      extension_attributes: {},
+      order_item_id: 0,
+      qty: 0
+    }
+  ],
+  notify: true,
+  appendComment: true,
+  comment: {
+    extension_attributes: {},
+    comment: string,
+    is_visible_on_front: 0
+  },
+  arguments: {
+    shipping_amount: 0,
+    adjustment_positive: 0,
+    adjustment_negative: 0,
+    extension_attributes: {
+      return_to_stock_items: [0]
+    }
+  }
+)
+```
+
+[Complete Refund Documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundOrderV1ExecutePost)
+
+### Creates new Shipment for given Order.
+
+Example:
+```rb
+Magento::Order.ship(order_id)
+>> 25 # return shipment id
+
+# or from instance
+
+order = Magento::Order.find(order_id)
+
+order.ship
+
+# you can pass parameters too
+
+order.ship(
+  capture: false,
+  appendComment: true,
+  items: [{ order_item_id: 123, qty: 1 }], # pass items to partial shipment
+  tracks: [
+    {
+      extension_attributes: { },
+      track_number: "string",
+      title: "string",
+      carrier_code: "string"
+    }
+  ]
+  notify: true
+)
+```
+
+[Complete Shipment Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdship#operation/salesShipOrderV1ExecutePost)
+
+
+### Cancel an Order
+
+Example:
+```rb
+order = Magento::Order.find(order_id)
+
+order.cancel # or
+
+Magento::Order.cancel(order_id)
+```
+
+## Invoice
+
+### Create refund for invoice
+
+Example: 
 ```rb
 Magento::Invoice.invoice(invoice_id)
 >> 12 # return refund id
@@ -739,111 +812,50 @@ invoice.refund(
 
 [Complete Refund Documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundInvoiceV1ExecutePost)
 
+### Capture an invoice
 
-## Create offline refund for order
-
-```rb
-Magento::Order.refund(order_id)
->> 12 # return refund id
-
-# or from instance
-
-order = Magento::Order.find(order_id)
-
-order.refund
-
-# you can pass parameters too
-
-order.refund(
-  items: [
-    {
-      extension_attributes: {},
-      order_item_id: 0,
-      qty: 0
-    }
-  ],
-  notify: true,
-  appendComment: true,
-  comment: {
-    extension_attributes: {},
-    comment: string,
-    is_visible_on_front: 0
-  },
-  arguments: {
-    shipping_amount: 0,
-    adjustment_positive: 0,
-    adjustment_negative: 0,
-    extension_attributes: {
-      return_to_stock_items: [0]
-    }
-  }
-)
-```
-
-[Complete Refund Documentation](https://magento.redoc.ly/2.4-admin/tag/invoicescomments#operation/salesRefundOrderV1ExecutePost)
-
-## Other Invoice methods
-
+Example:
 ```rb
 invoice = Magento::Invoice.find(invoice_id)
+invoice.capture
 
-invoice.capture # or
+# or through the class method
 Magento::Invoice.capture(invoice_id)
+```
 
-invoice.void # or
+### Void an invoice
+
+Example:
+```rb
+invoice = Magento::Invoice.find(invoice_id)
+invoice.void
+
+# or through the class method
 Magento::Invoice.void(invoice_id)
+```
 
-invoice.send_email # or
+### Send invoice email
+
+Example:
+```rb
+invoice = Magento::Invoice.find(invoice_id)
+invoice.send_email
+
+# or through the class method
 Magento::Invoice.send_email(invoice_id)
+```
 
+### Get invoice comments
+
+Example:
+```rb
 Magento::Invoice.comments(invoice_id).all
 Magento::Invoice.comments(invoice_id).where(created_at_gt: Date.today.prev_day).all
 ```
 
-## Creates new Shipment for given Order.
+## Sales Rules
 
-```rb
-Magento::Order.ship(order_id)
->> 25 # return shipment id
-
-# or from instance
-
-order = Magento::Order.find(order_id)
-
-order.ship
-
-# you can pass parameters too
-
-order.ship(
-  capture: false,
-  appendComment: true,
-  items: [{ order_item_id: 123, qty: 1 }], # pass items to partial shipment
-  tracks: [
-    {
-      extension_attributes: { },
-      track_number: "string",
-      title: "string",
-      carrier_code: "string"
-    }
-  ]
-  notify: true
-)
-```
-
-[Complete Shipment Documentation](https://magento.redoc.ly/2.4-admin/tag/orderorderIdship#operation/salesShipOrderV1ExecutePost)
-
-
-## Cancel an Order
-
-```rb
-order = Magento::Order.find(order_id)
-
-order.cancel # or
-
-Magento::Order.cancel(order_id)
-```
-
-## Generate Sales Rules and Coupons
+### Generate Sales Rules and Coupons
 
 ```rb
 rule = Magento::SalesRule.create(
@@ -878,33 +890,71 @@ Magento::SalesRule.generate_coupon(
   }
 )
 ```
-see all params in:
-- [Magento docs Coupon](https://magento.redoc.ly/2.3.5-admin/tag/couponsgenerate#operation/salesRuleCouponManagementV1GeneratePost)
-- [Magento docs SalesRules](https://magento.redoc.ly/2.3.5-admin/tag/salesRules#operation/salesRuleRuleRepositoryV1SavePost)
-	
-See [how to add coupons to cart](#guestcart)
+> see all params in: 
+[Magento docs Coupon](https://magento.redoc.ly/2.3.5-admin/tag/couponsgenerate#operation/salesRuleCouponManagementV1GeneratePost) and
+[Magento docs SalesRules](https://magento.redoc.ly/2.3.5-admin/tag/salesRules#operation/salesRuleRuleRepositoryV1SavePost)
 
-### First result
+
+## Customer
+
+### Get customer by token
 ```rb
-Magento::Product.first
->> <Magento::Product @sku="some-sku" ...>
-
-Magento::Product.where(name_like: 'some name%').first
->> <Magento::Product @sku="some-sku" ...>
+Magento::Customer.find_by_token('user_token')
 ```
 
-### Count result
+## Guest Cart
+
+### Payment information
+Set payment information to finish the order
+
+Example:
 ```rb
-Magento::Product.count
->> 7855
-Magento::Product.where(name_like: 'some name%').count
->> 15
+cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+# or use "build" to not request information from the magento API
+cart = Magento::GuestCart.build(
+  cart_id: 'aj8oUtY1Qi44Fror6UWVN7ftX1idbBKN'
+)
+
+cart.payment_information(
+  email: 'customer@gmail.com',
+  payment: { method: 'cashondelivery' }
+)
+
+>> "234575" # return the order id
+```
+
+### Add coupon to guest cart
+
+Example:
+```rb
+cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+cart.add_coupon('COAU4HXE0I')
+# You can also use the class method
+Magento::GuestCart.add_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7', 'COAU4HXE0I')
+
+>> true # return true on success
+```
+
+### Remove coupon from guest cart
+
+Example:
+```rb
+cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+cart.delete_coupon()
+# You can also use the class method
+Magento::GuestCart.delete_coupon('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
+
+>> true # return true on success
 ```
 
 ## Inventory
 
 ### Check whether a product is salable
 
+Example:
 ```rb
 Inventory.get_product_salable_quantity(sku: '4321', stock_id: 1)
 >> 1
@@ -912,6 +962,7 @@ Inventory.get_product_salable_quantity(sku: '4321', stock_id: 1)
 
 ### Check whether a product is salable for a specified quantity
 
+Example:
 ```rb
 Inventory.is_product_salable_for_requested_qty(
   sku: '4321',
@@ -930,27 +981,84 @@ Inventory.is_product_salable_for_requested_qty(
 }
 ```
 
-## Update product stock
+## **Helper classes**
+
+## Create product params
 
 ```rb
-product = Magento::Product.find('sku')
-product.update_stock(qty: 12, is_in_stock: true)
+params = Magento::Params::CreateProduct.new(
+  sku: '556-teste-builder',
+  name: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
+  description: 'Descrição do produto',
+  brand: 'Coca-Cola',
+  price: 4.99,
+  special_price: 3.49,
+  quantity: 2,
+  weight: 0.3,
+  attribute_set_id: 4,
+  images: [
+    *Magento::Params::CreateImage.new(
+      path: 'https://urltoimage.com/image.jpg',
+      title: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
+      position: 1,
+      main: true
+    ).variants,
+    Magento::Params::CreateImage.new(
+      path: '/path/to/image.jpg',
+      title: 'REFRIGERANTE PET COCA-COLA 1,5L ORIGINAL',
+      position: 2
+    )
+  ]
+)
+
+Magento::Product.create(params.to_h)
 ```
 
-or by class method
+## Create product image params
+
+Helper class to create product image params.
+
+before generating the hash, the following image treatments are performed:
+- resize image
+- remove alpha
+- leaves square
+- convert image to jpg
+
+Example:
+```rb
+params = Magento::Params::CreateImage.new(
+  title: 'Image title',
+  path: '/path/to/image.jpg', # or url
+  position: 1,
+  size: 'small', # options: 'large'(defaut), 'medium' and 'small',
+  disabled: true, # default is false,
+  main: true, # default is false,
+).to_h
+
+Magento::Product.add_media('sku', params)
+```
+
+The resize defaut confiruration is:
 
 ```rb
-Magento::Product.update_stock(sku, id, {
-  qty: 12,
-  is_in_stock: true 
-})
+Magento.configure do |config|
+  config.product_image.small_size  = '200x200>'
+  config.product_image.medium_size = '400x400>'
+  config.product_image.large_size  = '800x800>'
+end
 ```
 
-see all available attributes in: https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId
+## Import products from csv file
+
+_TODO: exemple to [Magento::Import.from_csv](lib/magento/import.rb#L8)_
+
+_TODO: exemple to [Magento::Import.get_csv_template](lib/magento/import.rb#L14)_
+
 
 ___
 
-##TODO:
+
+## **TODO:**
 
 ### Search products
 ```rb
@@ -966,16 +1074,9 @@ Magento::Product.where(name_like: 'some name%').last
 >> <Magento::Product @sku="some-sku" ...>
 ```
 
-## Customer
-
-### Get customer by token
-
-```rb
-Magento::Customer.find_by_token('user_token')
-```
-
 ### Tests
 
+___
 
 ## Development
 
@@ -985,4 +1086,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/WallasFaria/nfce_crawler.
+Bug reports and pull requests are welcome on GitHub at https://github.com/WallasFaria/magento_ruby.
