@@ -546,7 +546,7 @@ params = Magento::Params::CreateImage.new(
 product.add_media(params)
 ```
 
-> see more about [Magento::Params::CreateImage](lib/magento/params/create_image.rb#L6)
+> see more about [Magento::Params::CreateImage](lib/magento/params/create_image.rb#L9)
 
 ### Remove media from product
 

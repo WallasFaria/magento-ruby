@@ -3,47 +3,37 @@
 require 'open-uri'
 require 'mini_magick'
 
-# Helper class to create product image params.
-# before generating the hash, the following image treatments are performed:
-# - resize image
-# - remove alpha
-# - leaves square
-# - convert image to jpg
-#
-# example;
-#
-#   params = Magento::Params::CreateImage.new(
-#     title: 'Image title',
-#     path: '/path/to/image.jpg', # or url
-#     position: 1,
-#     size: 'small', # options: 'large'(defaut), 'medium' and 'small',
-#     disabled: true, # default is false,
-#     main: true, # default is false,
-#   ).to_h
-#
-#   Magento::Product.add_media('sku', params)
-#
-# The resize defaut confiruration is:
-#
-#   Magento.configure do |config|
-#     config.product_image.small_size  = '200x200>'
-#     config.product_image.medium_size = '400x400>'
-#     config.product_image.large_size  = '800x800>'
-#   end
-#
 module Magento
   module Params
 
-    # Example
+    # Helper class to create product image params.
+    # before generating the hash, the following image treatments are performed:
+    # - resize image
+    # - remove alpha
+    # - leaves square
+    # - convert image to jpg
     #
-    #   Magento::Params::CreateImage.new(
-    #     title: 'Some image',
-    #     path: '/path/to/image.jpg',
+    # Example:
+    #
+    #   params = Magento::Params::CreateImage.new(
+    #     title: 'Image title',
+    #     path: '/path/to/image.jpg', # or url
     #     position: 1,
-    #     size: 'large', # default large, options medium and small
-    #     disabled: false, # default false
-    #     main: true # default false
-    #   )
+    #     size: 'small', # options: 'large'(defaut), 'medium' and 'small',
+    #     disabled: true, # default is false,
+    #     main: true, # default is false,
+    #   ).to_h
+    #
+    #   Magento::Product.add_media('sku', params)
+    #
+    # The resize defaut confiruration is:
+    #
+    #   Magento.configure do |config|
+    #     config.product_image.small_size  = '200x200>'
+    #     config.product_image.medium_size = '400x400>'
+    #     config.product_image.large_size  = '800x800>'
+    #   end
+    #
     class CreateImage < Dry::Struct
       VARIANTS = {
         'large'  => :image,
