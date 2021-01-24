@@ -2,7 +2,7 @@
 
 Ruby library to consume the magento 2 api
 
-> Testado na versão 2.3 do magento
+> Tested in version 2.3 of magento
 
 [Getting started](#getting-started)
   - [Install](#install)
