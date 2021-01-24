@@ -38,6 +38,34 @@ module Magento
       super || @custom_attributes&.any? { |a| a.attribute_code == attribute_code.to_s }
     end
 
+    # Create new gallery entry
+    # 
+    # Example:
+    #
+    #   product = Magento::Product.find('sku')
+    #
+    #   product.add_media(
+    #     media_type: 'image',
+    #     label: 'Image label',
+    #     position: 1,
+    #     content: {
+    #       base64_encoded_data: 'image-string-base64',
+    #       type: 'image/jpg',
+    #       name: 'filename.jpg'
+    #     },
+    #     types: ['image']
+    #   )
+    #
+    # Or you can use the Magento::Params::CreateImage helper class
+    #
+    #   params = Magento::Params::CreateImage.new(
+    #     title: 'Image title',
+    #     path: '/path/to/image.jpg', # or url
+    #     position: 1,
+    #   ).to_h
+    #
+    #   product.add_media(params)
+    #
     def add_media(attributes)
       self.class.add_media(sku, attributes)
     end
@@ -91,6 +119,32 @@ module Magento
     class << self
       alias_method :find_by_sku, :find
 
+      # Create new gallery entry
+      #
+      # Example:
+      #
+      #   Magento::Product.add_media('sku', {
+      #     media_type: 'image',
+      #     label: 'Image title',
+      #     position: 1,
+      #     content: {
+      #       base64_encoded_data: 'image-string-base64',
+      #       type: 'image/jpg',
+      #       name: 'filename.jpg'
+      #     },
+      #     types: ['image']
+      #   })
+      #
+      # Or you can use the Magento::Params::CreateImage helper class
+      #
+      #   params = Magento::Params::CreateImage.new(
+      #     title: 'Image title',
+      #     path: '/path/to/image.jpg', # or url
+      #     position: 1,
+      #   ).to_h
+      #
+      #   Magento::Product.add_media('sku', params)
+      #
       def add_media(sku, attributes)
         request.post("products/#{sku}/media", { entry: attributes }).parse
       end
