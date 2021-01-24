@@ -169,15 +169,15 @@ Magento::Product
 
 ### `create`
 
-Creates a new resource based on past attributes.
+Creates a new resource based on reported attributes.
 
 Consult the magento documentation for available attributes for each resource:
 
 Documentation links:
-- [Product](#)
-- [Category](#)
-- [Order](#)
-- [Customer](#)
+- [Product](https://magento.redoc.ly/2.3.6-admin/tag/products#operation/catalogProductRepositoryV1SavePost)
+- [Category](https://magento.redoc.ly/2.3.6-admin/tag/categories#operation/catalogCategoryRepositoryV1SavePost)
+- [Order](https://magento.redoc.ly/2.3.6-admin/tag/orders#operation/salesOrderRepositoryV1SavePost)
+- [Customer](https://magento.redoc.ly/2.3.6-admin/tag/customers#operation/customerAccountManagementV1CreateAccountPost)
 
 Example:
 ```rb
@@ -208,15 +208,7 @@ Magento::Order.create(
 
 #### `update`
 
-Update a resource based on past attributes.
-
-Consult the magento documentation for available attributes for each resource:
-
-Documentation links:
-- [Product](#)
-- [Category](#)
-- [Order](#)
-- [Customer](#)
+Update a resource attributes.
 
 Example:
 
@@ -227,7 +219,7 @@ Magento::Product.update('sku-teste', name: 'Updated name')
 
 product = Magento::Product.find('sku-teste')
 
-product.update(name: 'Updated name')
+product.update(name: 'Updated name', status: '2')
 
 # or save after changing the object
 
