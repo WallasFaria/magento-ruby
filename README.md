@@ -25,10 +25,12 @@ Ruby library to consume the magento 2 api
 - [Product](#product)
   - [Shurtcuts](#shurtcuts)
   - [Update stock](#update-stock)
-  - [Add media](#add-media)
-  - [Remove media](#remove-media)
-  - [Add tier price](#add-tier-price)
-  - [Remove tier price](#remove-tier-price)
+  - [Add media](#add-media-to-product)
+  - [Remove media](#remove-media-from-product)
+  - [Add tier price](#add-tier-price-to-product)
+  - [Remove tier price](#remove-tier-price-from-product)
+  - [Create links](#create-links-to-product)
+  - [Remove link](#remove-link-from-product)
   - [Create](#create-a-product)
   - [Update](#update-a-product)
   - [Delete](#delete-a-product)
@@ -503,7 +505,7 @@ product.update_stock(qty: 12, is_in_stock: true)
 > see all available attributes in: [Magento Rest Api Documentation](https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId)
 
 
-### Add media
+### Add media to product
 
 Create new gallery entry
 
@@ -546,7 +548,7 @@ product.add_media(params)
 
 > see more about [Magento::Params::CreateImage](lib/magento/params/create_image.rb#L6)
 
-### Remove media
+### Remove media from product
 
 Example:
 ```rb
@@ -559,7 +561,7 @@ product.add_media(madia_id)
 Magento::Product.add_media('sku', madia_id)
 ```
 
-### Add tier price
+### Add tier price to product
 
 Add `price` on product `sku` for specified `customer_group_id`
 
@@ -573,7 +575,7 @@ product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
 Magento::Product.add_tier_price('sku', 3.99, quantity: 1, customer_group_id: :all)
 ```
 
-### Remove tier price
+### Remove tier price from product
 
 ```rb
 product = Magento::Product.find(1)
@@ -582,6 +584,46 @@ product.remove_tier_price(quantity: 1, customer_group_id: :all)
 # or through the class method
 
 Magento::Product.remove_tier_price('sku', quantity: 1, customer_group_id: :all)
+```
+
+### Create links to product
+
+Assign a product link to another product
+
+Example:
+```rb
+product = Magento::Product.find('sku')
+
+link_param = {
+  link_type: 'upsell',
+  linked_product_sku: 'linked_product_sku',
+  linked_product_type: 'simple',
+  position: 1,
+  sku: 'sku'
+}
+
+product.create_links([link_param])
+
+# or through the class method
+
+Product.create_links('sku', [link_param])
+```
+
+### Remove link from product
+
+Example:
+```rb
+product = Magento::Product.find('sku')
+
+product.remove_link(link_type: 'simple', linked_product_sku: 'linked_product_sku')
+
+# or through the class method
+
+Product.remove_link(
+  'sku',
+  link_type: 'simple',
+  linked_product_sku: 'linked_product_sku'
+)
 ```
 
 ## GuestCart

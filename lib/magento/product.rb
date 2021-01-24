@@ -116,6 +116,28 @@ module Magento
       self.class.update_stock(sku, id, attributes)
     end
 
+    # Assign a product link to another product
+    #
+    #   product = Magento::Product.find('sku')
+    #
+    #   product.create_links([
+    #     {
+    #       link_type: 'upsell',
+    #       linked_product_sku: 'linked_product_sku',
+    #       linked_product_type: 'simple',
+    #       position: position,
+    #       sku: 'product-sku'
+    #     }
+    #   ])
+    #
+    def create_links(product_links)
+      self.class.create_links(sku, product_links)
+    end
+
+    def remove_link(link_type:, linked_product_sku:)
+      self.class.remove_link(sku, link_type: link_type, linked_product_sku: linked_product_sku)
+    end
+
     class << self
       alias_method :find_by_sku, :find
 
@@ -188,7 +210,7 @@ module Magento
         request.put("products/#{sku}/stockItems/#{id}", stockItem: attributes).parse
       end
 
-      # Creates link to product
+      # Assign a product link to another product
       #
       #   Product.create_links('product-sku', [
       #     {
