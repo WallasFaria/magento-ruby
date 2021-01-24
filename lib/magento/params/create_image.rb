@@ -3,6 +3,34 @@
 require 'open-uri'
 require 'mini_magick'
 
+# Helper class to create product image params.
+# before generating the hash, the following image treatments are performed:
+# - resize image
+# - remove alpha
+# - leaves square
+# - convert image to jpg
+#
+# example;
+#
+#   params = Magento::Params::CreateImage.new(
+#     title: 'Image title',
+#     path: '/path/to/image.jpg', # or url
+#     position: 1,
+#     size: 'small', # options: 'large'(defaut), 'medium' and 'small',
+#     disabled: true, # default is false,
+#     main: true, # default is false,
+#   ).to_h
+#
+#   Magento::Product.add_media('sku', params)
+#
+# The resize defaut confiruration is:
+#
+#   Magento.configure do |config|
+#     config.product_image.small_size  = '200x200>'
+#     config.product_image.medium_size = '400x400>'
+#     config.product_image.large_size  = '800x800>'
+#   end
+#
 module Magento
   module Params
 
@@ -45,6 +73,20 @@ module Magento
         }
       end
 
+      # Generates a list containing an Magento::Params::CreateImage
+      # instance for each size of the same image.
+      #
+      # Example:
+      #
+      #   params = Magento::Params::CreateImage.new(
+      #     title: 'Image title',
+      #     path: '/path/to/image.jpg', # or url
+      #     position: 1,
+      #   ).variants
+      #
+      #   params.map(&:size)
+      #   => ['large', 'medium', 'small']
+      #
       def variants
         VARIANTS.keys.map do |size|
           CreateImage.new(attributes.merge(size: size, disabled: size != 'large'))

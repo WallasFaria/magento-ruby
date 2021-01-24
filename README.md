@@ -23,8 +23,12 @@ Ruby library to consume the magento 2 api
   - [Pagination](#pagination)
 - [Record Collection](#record-collection)
 - [Product](#product)
-  - [Shurtcuts](#shurtcut)
+  - [Shurtcuts](#shurtcuts)
   - [Update stock](#update-stock)
+  - [Add media](#add-media)
+  - [Remove media](#remove-media)
+  - [Add tier price](#add-tier-price)
+  - [Remove tier price](#remove-tier-price)
   - [Create](#create-a-product)
   - [Update](#update-a-product)
   - [Delete](#delete-a-product)
@@ -440,15 +444,11 @@ All Methods:
 :empty?
 ```
 
-**Outside pattern**
+## Product
 
-Get customer by token
+### Shurtcuts
 
-```rb
-Magento::Customer.find_by_token('user_token')
-```
-
-## Shurtcut to get custom attribute value by custom attribute code in product
+Shurtcut to get custom attribute value by custom attribute code in product
 
 Exemple:
 
@@ -479,24 +479,110 @@ product.respond_to? :description
 > true
 ```
 
-## add tier price
+Shurtcut to get product stock and stock quantity
+
+```rb
+product = Magento::Product.find('sku')
+
+product.stock
+> <Magento::StockItem @item_id=7243, @product_id=1221, ...>
+
+product.stock_quantity
+> 22
+```
+
+### Update stock
+
+Update product stock
+
+```rb
+product = Magento::Product.find('sku')
+product.update_stock(qty: 12, is_in_stock: true)
+```
+
+> see all available attributes in: [Magento Rest Api Documentation](https://magento.redoc.ly/2.4.1-admin/tag/productsproductSkustockItemsitemId)
+
+
+### Add media
+
+Create new gallery entry
+
+Example:
+```rb
+product = Magento::Product.find('sku')
+
+image_params = {
+  media_type: 'image',
+  label: 'Image label',
+  position: 1,
+  content: {
+    base64_encoded_data: '/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAA...',
+    type: 'image/jpg',
+    name: 'filename.jpg'
+  },
+  types: ['image']
+}
+
+product.add_media(image_params)
+
+# or through the class method
+
+Magento::Product.add_media('sku', image_params)
+```
+> see all available attributes in: [Magento Rest Api Documentation](https://magento.redoc.ly/2.3.6-admin/#operation/catalogProductAttributeMediaGalleryManagementV1CreatePost)
+
+
+you can also use the `Magento::Params::CreateImage` helper class
+
+```rb
+params = Magento::Params::CreateImage.new(
+  title: 'Image title',
+  path: '/path/to/image.jpg', # or url
+  position: 1,
+).to_h
+
+product.add_media(params)
+```
+
+> see more about [Magento::Params::CreateImage](lib/magento/params/create_image.rb#L6)
+
+### Remove media
+
+Example:
+```rb
+product = Magento::Product.find('sku')
+
+product.add_media(madia_id)
+
+# or through the class method
+
+Magento::Product.add_media('sku', madia_id)
+```
+
+### Add tier price
 
 Add `price` on product `sku` for specified `customer_group_id`
 
-Param `quantity` is the minimun amount to apply the price
+The `quantity` params is the minimun amount to apply the price
+```rb
+product = Magento::Product.find('sku')
+product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
+
+# or through the class method
+
+Magento::Product.add_tier_price('sku', 3.99, quantity: 1, customer_group_id: :all)
+```
+
+### Remove tier price
 
 ```rb
 product = Magento::Product.find(1)
-product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
-> true
+product.remove_tier_price(quantity: 1, customer_group_id: :all)
 
-# OR
+# or through the class method
 
-Magento::Product.add_tier_price(1, 3.99, quantity: 1, customer_group_id: :all)
-> true
+Magento::Product.remove_tier_price('sku', quantity: 1, customer_group_id: :all)
 ```
-
-\* _same pattern to all models_
 
 ## GuestCart
 
@@ -836,6 +922,14 @@ Magento::Product.last
 
 Magento::Product.where(name_like: 'some name%').last
 >> <Magento::Product @sku="some-sku" ...>
+```
+
+## Customer
+
+### Get customer by token
+
+```rb
+Magento::Customer.find_by_token('user_token')
 ```
 
 ### Tests
