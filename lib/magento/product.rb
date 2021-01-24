@@ -38,6 +38,34 @@ module Magento
       super || @custom_attributes&.any? { |a| a.attribute_code == attribute_code.to_s }
     end
 
+    # Create new gallery entry
+    # 
+    # Example:
+    #
+    #   product = Magento::Product.find('sku')
+    #
+    #   product.add_media(
+    #     media_type: 'image',
+    #     label: 'Image label',
+    #     position: 1,
+    #     content: {
+    #       base64_encoded_data: 'image-string-base64',
+    #       type: 'image/jpg',
+    #       name: 'filename.jpg'
+    #     },
+    #     types: ['image']
+    #   )
+    #
+    # Or you can use the Magento::Params::CreateImage helper class
+    #
+    #   params = Magento::Params::CreateImage.new(
+    #     title: 'Image title',
+    #     path: '/path/to/image.jpg', # or url
+    #     position: 1,
+    #   ).to_h
+    #
+    #   product.add_media(params)
+    #
     def add_media(attributes)
       self.class.add_media(sku, attributes)
     end
@@ -88,9 +116,57 @@ module Magento
       self.class.update_stock(sku, id, attributes)
     end
 
+    # Assign a product link to another product
+    #
+    #   product = Magento::Product.find('sku')
+    #
+    #   product.create_links([
+    #     {
+    #       link_type: 'upsell',
+    #       linked_product_sku: 'linked_product_sku',
+    #       linked_product_type: 'simple',
+    #       position: position,
+    #       sku: 'product-sku'
+    #     }
+    #   ])
+    #
+    def create_links(product_links)
+      self.class.create_links(sku, product_links)
+    end
+
+    def remove_link(link_type:, linked_product_sku:)
+      self.class.remove_link(sku, link_type: link_type, linked_product_sku: linked_product_sku)
+    end
+
     class << self
       alias_method :find_by_sku, :find
 
+      # Create new gallery entry
+      #
+      # Example:
+      #
+      #   Magento::Product.add_media('sku', {
+      #     media_type: 'image',
+      #     label: 'Image title',
+      #     position: 1,
+      #     content: {
+      #       base64_encoded_data: 'image-string-base64',
+      #       type: 'image/jpg',
+      #       name: 'filename.jpg'
+      #     },
+      #     types: ['image']
+      #   })
+      #
+      # Or you can use the Magento::Params::CreateImage helper class
+      #
+      #   params = Magento::Params::CreateImage.new(
+      #     title: 'Image title',
+      #     path: '/path/to/image.jpg', # or url
+      #     position: 1,
+      #   ).to_h
+      #
+      #   Magento::Product.add_media('sku', params)
+      #
       def add_media(sku, attributes)
         request.post("products/#{sku}/media", { entry: attributes }).parse
       end
@@ -134,6 +210,18 @@ module Magento
         request.put("products/#{sku}/stockItems/#{id}", stockItem: attributes).parse
       end
 
+      # Assign a product link to another product
+      #
+      #   Product.create_links('product-sku', [
+      #     {
+      #       link_type: 'upsell',
+      #       linked_product_sku: 'linked_product_sku',
+      #       linked_product_type: 'simple',
+      #       position: position,
+      #       sku: 'product-sku'
+      #     }
+      #   ])
+      #
       def create_links(sku, product_links)
         request.post("products/#{sku}/links", { items: product_links })
       end
