@@ -8,8 +8,6 @@ class RequestMock
 end
 
 RSpec.describe Magento::Order do
-  before { Magento.url = 'https://site.com' }
-
   describe '.send_email' do
     it 'shuld request POST /orders/:id/emails' do
       request = RequestMock.new
