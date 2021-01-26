@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: "<MAGENTO_URL>/rest/all/V1/products/1243"
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <MAGENTO_TOKEN>
+      Connection:
+      - close
+      Host:
+      - "<MAGENTO_DOMAIN>"
+      User-Agent:
+      - http.rb/4.4.1
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 26 Jan 2021 12:14:13 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - close
+      Set-Cookie:
+      - PHPSESSID=ja838407a6que0872jcavh6nnn; expires=Tue, 26-Jan-2021 13:14:13 GMT;
+        Max-Age=3600; path=/; domain=<MAGENTO_DOMAIN>; secure; HttpOnly
+      - __cfduid=d55e21b42ee59161b6b98cd672c3aed2e1611663253; expires=Thu, 25-Feb-21
+        12:14:13 GMT; path=/; domain=.superbomemcasa.com.br; HttpOnly; SameSite=Lax;
+        Secure
+      Vary:
+      - Accept-Encoding
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate
+      Pragma:
+      - no-cache
+      X-Frame-Options:
+      - SAMEORIGIN
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 07e036b79f0000f633d7210000000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report?s=ojIkem%2BboVf6LDGgK2JdO7t9VzPZ4pDxSmPkBKJMXK%2FTZPZQJMXgM4dLSxKcYOfxbXUWorkR0un78o%2BvbskH1pvLHaYY1ynWz9nSQNNSLAltK%2BPoysRl0aKNwHrsnpZPJ%2FETaTj3"}],"max_age":604800,"group":"cf-nel"}'
+      Nel:
+      - '{"max_age":604800,"report_to":"cf-nel"}'
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 617a2705cd1ff633-GRU
+    body:
+      encoding: UTF-8
+      string: '{"id":2455,"sku":"1243","name":"Ketchup Hellmann''s  Tradicional 380
+        G ","attribute_set_id":4,"price":9.09,"status":1,"visibility":4,"type_id":"simple","created_at":"2020-03-28
+        23:53:11","updated_at":"2020-08-29 00:22:59","weight":0.3,"extension_attributes":{"website_ids":[1,2],"category_links":[{"position":0,"category_id":"2451"},{"position":0,"category_id":"2452"}],"stock_item":{"item_id":2452,"product_id":2455,"stock_id":1,"qty":30,"is_in_stock":true,"is_qty_decimal":false,"show_default_notification_message":false,"use_config_min_qty":true,"min_qty":0,"use_config_min_sale_qty":0,"min_sale_qty":1,"use_config_max_sale_qty":true,"max_sale_qty":10000,"use_config_backorders":true,"backorders":0,"use_config_notify_stock_qty":true,"notify_stock_qty":1,"use_config_qty_increments":true,"qty_increments":0,"use_config_enable_qty_inc":true,"enable_qty_increments":false,"use_config_manage_stock":true,"manage_stock":true,"low_stock_date":null,"is_decimal_divided":false,"stock_status_changed_auto":0}},"product_links":[],"options":[],"media_gallery_entries":[{"id":7913,"media_type":"image","label":"KETCHUP
+        HELLMANN''S 380G TRADICIONAL","position":0,"disabled":false,"types":["image","small_image","thumbnail","swatch_image"],"file":"\/7\/8\/7891150027848_1_1_1200_72_RGB_1.png"}],"tier_prices":[],"custom_attributes":[{"attribute_code":"description","value":"Ketchup
+        Tradicional Hellmann''s Squeeze 380g"},{"attribute_code":"image","value":"\/7\/8\/7891150027848_1_1_1200_72_RGB_1.png"},{"attribute_code":"url_key","value":"ketchup-hellmann-s-380g-tradicional"},{"attribute_code":"gift_message_available","value":"0"},{"attribute_code":"mostrar","value":"0"},{"attribute_code":"small_image","value":"\/7\/8\/7891150027848_1_1_1200_72_RGB_1.png"},{"attribute_code":"options_container","value":"container2"},{"attribute_code":"thumbnail","value":"\/7\/8\/7891150027848_1_1_1200_72_RGB_1.png"},{"attribute_code":"swatch_image","value":"\/7\/8\/7891150027848_1_1_1200_72_RGB_1.png"},{"attribute_code":"msrp_display_actual_price_type","value":"0"},{"attribute_code":"tax_class_id","value":"2"},{"attribute_code":"timershow","value":"1"},{"attribute_code":"gtin","value":"7891150027848,97623"},{"attribute_code":"required_options","value":"0"},{"attribute_code":"has_options","value":"0"},{"attribute_code":"image_label","value":"KETCHUP
+        HELLMANN''S 380G TRADICIONAL"},{"attribute_code":"category_ids","value":["2451","2452"]},{"attribute_code":"small_image_label","value":"KETCHUP
+        HELLMANN''S 380G TRADICIONAL"},{"attribute_code":"bebida_alcoolica","value":"0"},{"attribute_code":"thumbnail_label","value":"KETCHUP
+        HELLMANN''S 380G TRADICIONAL"},{"attribute_code":"featured","value":"1"}]}'
+  recorded_at: Tue, 26 Jan 2021 12:14:13 GMT
+recorded_with: VCR 6.0.0
