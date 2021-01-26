@@ -19,7 +19,7 @@ VCR.configure do |c|
   c.cassette_library_dir = 'spec/vcr_cassettes'
   c.hook_into :webmock
   c.configure_rspec_metadata!
-  c.filter_sensitive_data('<MAGENTO_URL>') { ENV['MAGENTO_URL'] }
-  c.filter_sensitive_data('<MAGENTO_DOMAIN>') { ENV['MAGENTO_URL'].to_s.sub(/^http(s)?:\/\//, '') }
-  c.filter_sensitive_data('<MAGENTO_TOKEN>') { ENV['MAGENTO_TOKEN'] }
+  c.filter_sensitive_data('<MAGENTO_URL>') { ENV.fetch('MAGENTO_URL') }
+  c.filter_sensitive_data('<MAGENTO_DOMAIN>') { ENV.fetch('MAGENTO_URL').sub(/^http(s)?:\/\//, '') }
+  c.filter_sensitive_data('<MAGENTO_TOKEN>') { ENV.fetch('MAGENTO_TOKEN') }
 end
