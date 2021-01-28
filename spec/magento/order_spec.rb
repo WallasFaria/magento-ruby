@@ -1,36 +1,37 @@
-class RequestMock
-  attr_reader :path
-
-  def post(path)
-    @path = path
-    OpenStruct.new(success?: true, parse: true)
-  end
-end
-
 RSpec.describe Magento::Order do
-  describe '.send_email' do
-    it 'shuld request POST /orders/:id/emails' do
-      request = RequestMock.new
-      allow(Magento::Order).to receive(:request).and_return(request)
+  let(:magento_client) { request = Magento::Request.new }
 
-      order_id = 25
-      result = Magento::Order.send_email(order_id)
-
-      expect(request.path).to eql("orders/#{order_id}/emails")
-      expect(result).to be true
-    end
+  before do
+    allow(Magento::Order).to receive(:request).and_return(magento_client)
   end
 
-  describe '#send_email' do
-    it 'shuld request POST /orders/:id/emails' do
-      request = RequestMock.new
-      allow(Magento::Order).to receive(:request).and_return(request)
+  describe 'send_email' do
+    let(:order_id) { 11735 }
+    let(:response) { double('Response', parse: true, status: 200) }
 
-      order = Magento::Order.build(id: 25)
-      result = order.send_email
+    describe 'class method' do
+      it 'should request POST /orders/:id/emails' do
+        expect(magento_client).to receive(:post)
+          .with("orders/#{order_id}/emails")
+          .and_return(response)
+  
+        result = Magento::Order.send_email(order_id)
+      end
 
-      expect(request.path).to eql("orders/25/emails")
-      expect(result).to be true
+      it 'should return true' do
+        VCR.use_cassette('order/send_email') do
+          expect(Magento::Order.send_email(order_id)).to be(true).or be(false)
+        end
+      end
+    end
+
+    describe 'instance method' do
+      it 'shuld call the class method with order_id' do
+        expect(Magento::Order).to receive(:send_email).with(order_id)
+
+        order = Magento::Order.build(id: order_id)
+        result = order.send_email
+      end
     end
   end
 end

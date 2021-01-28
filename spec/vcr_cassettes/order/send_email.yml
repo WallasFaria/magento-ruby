@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<MAGENTO_URL>/rest/all/V1/orders/11735/emails"
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <MAGENTO_TOKEN>
+      Connection:
+      - close
+      Host:
+      - "<MAGENTO_DOMAIN>"
+      User-Agent:
+      - http.rb/4.4.1
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 28 Jan 2021 02:19:28 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - close
+      Set-Cookie:
+      - PHPSESSID=2smb8fbfrh89ov5l6dsaog9ol3; expires=Thu, 28-Jan-2021 03:19:28 GMT;
+        Max-Age=3600; path=/; domain=<MAGENTO_DOMAIN>; secure; HttpOnly
+      - __cfduid=d6599c746d9235e60e31314f2c23603101611800368; expires=Sat, 27-Feb-21
+        02:19:28 GMT; path=/; domain=.superbomemcasa.com.br; HttpOnly; SameSite=Lax;
+        Secure
+      Vary:
+      - Accept-Encoding
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate
+      Pragma:
+      - no-cache
+      X-Frame-Options:
+      - SAMEORIGIN
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 07e862ec7d0000f603b22c5000000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report?s=LcpIGCN14P04w%2B12%2BJip%2BoqrTEEJHVD5vP3%2FqWTDV843xCQbwKwwisiq23jbvZ0fOkDmTOxTTgA804Jq1CCnW9d3I14x%2BUGjfoosFZuRXzpxNONKefOyryVm4KckyBHTJSF1EtaW"}]}'
+      Nel:
+      - '{"max_age":604800,"report_to":"cf-nel"}'
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 61873a8d9b69f603-GRU
+    body:
+      encoding: UTF-8
+      string: 'false'
+  recorded_at: Thu, 28 Jan 2021 02:19:28 GMT
+recorded_with: VCR 6.0.0
