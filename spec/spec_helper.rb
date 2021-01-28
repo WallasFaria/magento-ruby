@@ -15,11 +15,15 @@ RSpec.configure do |config|
   end
 end
 
+Magento.configure do |config|
+  config.url = 'https://dev.superbomemcasa.com.br'
+end
+
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/vcr_cassettes'
   c.hook_into :webmock
   c.configure_rspec_metadata!
-  c.filter_sensitive_data('<MAGENTO_URL>') { ENV.fetch('MAGENTO_URL') }
-  c.filter_sensitive_data('<MAGENTO_DOMAIN>') { ENV.fetch('MAGENTO_URL').sub(/^http(s)?:\/\//, '') }
-  c.filter_sensitive_data('<MAGENTO_TOKEN>') { ENV.fetch('MAGENTO_TOKEN') }
+  c.filter_sensitive_data('<MAGENTO_URL>') { Magento.configuration.url }
+  c.filter_sensitive_data('<MAGENTO_DOMAIN>') { Magento.configuration.url.sub(/^http(s)?:\/\//, '') }
+  c.filter_sensitive_data('<MAGENTO_TOKEN>') { Magento.configuration.token }
 end
