@@ -1,18 +1,64 @@
+class Magento::Faker < Magento::Model; end
+
 RSpec.describe Magento::Query do
+  subject { Magento::Query.new(Magento::Faker) }
+
   describe '#where' do
     it 'is pending'
   end
 
   describe '#page' do
-    it 'is pending'
+    it do
+      subject.page(2)
+      expect(subject.send(:current_page)).to eql(2)
+    end
   end
 
   describe '#page_size' do
-    it 'is pending'
+    it do
+      subject.page_size(5)
+      expect(subject.instance_variable_get(:@page_size)).to eql(5)
+    end
   end
 
   describe '#select' do
-    it 'is pending'
+    it 'set fields inside items[]' do
+      subject.select(:id, :name)
+
+      expect(subject.send(:fields)).to eql('items[id,name],search_criteria,total_count')
+    end
+
+    it 'allow hash' do
+      subject.select(:id, nested_attribute: :name)
+
+      expect(subject.send(:fields)).to eql('items[id,nested_attribute[name]],search_criteria,total_count')
+    end
+
+    it 'allow hash with key and value as array' do
+      subject.select(:id, nested_attribute: [:id, :name])
+
+      expect(subject.send(:fields)).to eql('items[id,nested_attribute[id,name]],search_criteria,total_count')
+    end
+
+    it 'allow hash multiple level' do
+      subject.select(:id, nested_attribute: [:id, :name, stock: :quantity])
+
+      expect(subject.send(:fields)).to eql(
+        'items[id,nested_attribute[id,name,stock[quantity]]],search_criteria,total_count'
+      )
+    end
+
+    context 'when model is Magento::Category' do
+      class Magento::Category < Magento::Model; end
+
+      subject { Magento::Query.new(Magento::Category) }
+
+      it 'set fields inseide children_data[]' do
+        subject.select(:id, :name)
+
+        expect(subject.send(:fields)).to eql('children_data[id,name]')
+      end
+    end
   end
 
   describe '#order' do
