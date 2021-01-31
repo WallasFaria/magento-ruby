@@ -71,7 +71,7 @@ module Magento
     end
 
     def order(attributes)
-      if attributes.is_a?(String)
+      if attributes.is_a?(String) || attributes.is_a?(Symbol)
         self.sort_orders = [{ field: verify_id(attributes), direction: :asc }]
       elsif attributes.is_a?(Hash)
         self.sort_orders = []
