@@ -116,7 +116,39 @@ RSpec.describe Magento::Query do
   end
 
   describe '#order' do
-    it 'is pending'
+    it 'set order in sort_orders' do
+      subject.order(name: :desc)
+
+      expect(subject.send(:sort_orders)).to eql(
+        [{ field: :name, direction: :desc }]
+      )
+
+      subject.order(created_at: :desc, name: :asc)
+
+      expect(subject.send(:sort_orders)).to eql(
+        [
+          { field: :created_at, direction: :desc },
+          { field: :name, direction: :asc }
+        ]
+      )
+    end
+
+    context 'when the direction is not passed' do
+      it 'the :asc direction is used as default' do
+        subject.order(:name)
+
+        expect(subject.send(:sort_orders)).to eql(
+          [{ field: :name, direction: :asc }]
+        )
+
+        subject.order(:created_at, :name)
+
+        expect(subject.send(:sort_orders)).to eql([
+          { field: :created_at, direction: :asc },
+          { field: :name, direction: :asc }
+        ])
+      end
+    end
   end
 
   describe '#all' do
