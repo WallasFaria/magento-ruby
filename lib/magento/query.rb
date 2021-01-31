@@ -70,15 +70,17 @@ module Magento
       self
     end
 
-    def order(attributes)
-      if attributes.is_a?(String) || attributes.is_a?(Symbol)
-        self.sort_orders = [{ field: verify_id(attributes), direction: :asc }]
-      elsif attributes.is_a?(Hash)
-        self.sort_orders = []
-        attributes.each do |field, direction|
-          raise "Invalid sort order direction '#{direction}'" unless %w[asc desc].include?(direction.to_s)
+    def order(*attributes)
+      self.sort_orders = []
+      attributes.each do |sort_order|
+        if sort_order.is_a?(String) || sort_order.is_a?(Symbol)
+          sort_orders << { field: verify_id(sort_order), direction: :asc }
+        elsif sort_order.is_a?(Hash)
+          sort_order.each do |field, direction|
+            raise "Invalid sort order direction '#{direction}'" unless %w[asc desc].include?(direction.to_s)
 
-          sort_orders << { field: verify_id(field), direction: direction }
+            sort_orders << { field: verify_id(field), direction: direction }
+          end
         end
       end
       self
