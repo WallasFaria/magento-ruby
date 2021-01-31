@@ -4,7 +4,61 @@ RSpec.describe Magento::Query do
   subject { Magento::Query.new(Magento::Faker) }
 
   describe '#where' do
-    it 'is pending'
+    it 'add the filter to group of filters' do
+      subject.where(price_gt: 50)
+
+      expect(subject.send(:filter_groups)).to eql([
+        { filters: [{ field: 'price', conditionType: 'gt', value: 50 }] }
+      ])
+    end
+
+    context 'when the condition is not passed' do
+      it 'the "eq" condition is used as default' do
+        subject.where(price: 50)
+
+        expect(subject.send(:filter_groups)).to eql([
+          { filters: [{ field: :price, conditionType: 'eq', value: 50 }] }
+        ])
+      end
+    end
+
+    context 'when it is called more than once' do
+      it 'adds filter in diferent groups' do
+        subject.where(price_gt: 10).where(price_lt: 20)
+
+        expect(subject.send(:filter_groups)).to eql([
+          { filters: [{ field: 'price', conditionType: 'gt', value: 10 }] },
+          { filters: [{ field: 'price', conditionType: 'lt', value: 20 }] }
+        ])
+      end
+    end
+
+    context 'when it is called with more than one filter' do
+      it 'adds the filters in same group' do
+        subject.where(price_gt: 10, price_lt: 20)
+
+        expect(subject.send(:filter_groups)).to eql([
+          {
+            filters: [
+              { field: 'price', conditionType: 'gt', value: 10 },
+              { field: 'price', conditionType: 'lt', value: 20 }
+            ]
+          }
+        ])
+      end
+    end
+
+    context 'when the condition is "in" or "nin" and value is a Array' do
+      it 'converts the value to string' do
+        subject.where(status_in: [:pending, :new])
+        subject.where(entity_id_nin: [123, 321])
+
+        expect(subject.send(:filter_groups)).to eql([
+          { filters: [{ field: 'status', conditionType: 'in', value: 'pending,new' }] },
+          { filters: [{ field: 'entity_id', conditionType: 'nin', value: '123,321' }] }
+        ])
+      end
+    end
   end
 
   describe '#page' do
