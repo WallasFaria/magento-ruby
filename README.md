@@ -288,7 +288,7 @@ Magento::Product
     ]
   )
   .all
-  
+
 Magento::Product
   .select(
     :id,
@@ -460,7 +460,7 @@ Shurtcut to get custom attribute value by custom attribute code in product
 Exemple:
 
 ```rb
-product.attr :description 
+product.attr :description
 # it is the same as
 product.custom_attributes.find { |a| a.attribute_code == 'description' }&.value
 
@@ -510,7 +510,7 @@ product.update_stock(qty: 12, is_in_stock: true)
 
 Magento::Product.update_stock('sku', id, {
   qty: 12,
-  is_in_stock: true 
+  is_in_stock: true
 })
 ```
 
@@ -758,11 +758,33 @@ order.cancel # or
 Magento::Order.cancel(order_id)
 ```
 
+### Add a comment on given Order
+
+Example:
+```rb
+order = Magento::Order.find(order_id)
+
+order.add_comment(
+  'comment',
+  is_customer_notified: 0,
+  is_visible_on_front: 1
+)
+
+# or
+
+Magento::Order.add_comment(
+  order_id,
+  'comment',
+  is_customer_notified: 0,
+  is_visible_on_front: 1
+)
+```
+
 ## Invoice
 
 ### Create refund for invoice
 
-Example: 
+Example:
 ```rb
 Magento::Invoice.invoice(invoice_id)
 >> 12 # return refund id
@@ -882,7 +904,7 @@ Magento::SalesRule.generate_coupon(
   }
 )
 ```
-> see all params in: 
+> see all params in:
 [Magento docs Coupon](https://magento.redoc.ly/2.3.5-admin/tag/couponsgenerate#operation/salesRuleCouponManagementV1GeneratePost) and
 [Magento docs SalesRules](https://magento.redoc.ly/2.3.5-admin/tag/salesRules#operation/salesRuleRuleRepositoryV1SavePost)
 

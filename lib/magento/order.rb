@@ -34,7 +34,6 @@ module Magento
       self.class.invoice(id, params)
     end
 
-    
     #
     # Create offline refund for order
     #
@@ -63,6 +62,22 @@ module Magento
 
     def send_email
       self.class.send_email(id)
+    end
+
+    #
+    # Creates a comment on the given Order
+    #
+    # order = Magento::Order.find(order_id)
+    #
+    # order.add_comment(
+    #   'comment',
+    #   is_customer_notified: 0,
+    #   is_visible_on_front: 1
+    # )
+    #
+    # Return true on success
+    def add_comment(comment, comment_params = nil)
+      self.class.add_comment(id, comment, comment_params)
     end
 
     class << self
@@ -104,7 +119,6 @@ module Magento
         request.post("order/#{order_id}/invoice", invoice_params).parse
       end
 
-      
       #
       # Create offline refund for order
       #
@@ -179,6 +193,29 @@ module Magento
 
       def send_email(order_id)
         request.post("orders/#{order_id}/emails").parse
+      end
+
+      #
+      # Creates a comment on the given Order
+      #
+      # Magento::Order.add_comment(
+      #   order_id,
+      #   'comment',
+      #   is_customer_notified: 0,
+      #   is_visible_on_front: 1
+      # )
+      #
+      # to complete [documentation](https://magento.redoc.ly/2.4.2-admin/tag/ordersidcomments#operation/salesOrderManagementV1AddCommentPost)
+      #
+      # @return {Boolean}: return true on success
+      def add_comment(order_id, comment, comment_params = nil)
+        request.post(
+          "orders/#{order_id}/comments",
+          statusHistory: {
+            comment: comment,
+            **comment_params
+          }
+        ).parse
       end
     end
   end
