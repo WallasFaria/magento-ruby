@@ -77,7 +77,7 @@ Ruby library to consume the magento 2 api
 Add in your Gemfile
 
 ```rb
-gem 'magento', '~> 0.27.0'
+gem 'magento', '~> 0.28.0'
 ```
 
 or run
