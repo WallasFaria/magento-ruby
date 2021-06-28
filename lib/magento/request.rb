@@ -54,7 +54,12 @@ module Magento
       begin
         msg = resp.parse['message']
         errors = resp.parse['errors'] || resp.parse['parameters']
-        resp.parse['parameters'].each { |k, v| msg.sub! "%#{k}", v } if resp.parse['parameters'].is_a? Hash
+        case errors
+        when Hash
+          errors.each { |k, v| msg.sub! "%#{k}", v }
+        when Array
+          errors.each_with_index { |v, i| msg.sub! "%#{i + 1}", v.to_s }
+        end
       rescue StandardError
         msg = 'Failed access to the magento server'
         errors = []
