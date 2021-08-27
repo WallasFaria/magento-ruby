@@ -31,6 +31,27 @@ module Magento
       self.class.delete_coupon(id)
     end
 
+    #
+    # Place order for cart
+    #
+    # Example:
+    #
+    #   cart = Magento::Cart.find('12345')
+    #
+    #   # or use "build" to not request information from the magento API
+    #   cart = Magento::GuestCart.build({ 'cart_id' => '12345' })
+    #
+    #   cart.order(
+    #     email: 'customer@gmail.com',
+    #     payment: { method: 'cashondelivery' }
+    #   )
+    #
+    # @return String: return the order id
+    def order(email:, payment:)
+      attributes = { cartId: id, paymentMethod: payment, email: email }
+      self.class.order(attributes)
+    end
+
     class << self
       #
       # Add a coupon by code to a specified cart.
@@ -59,6 +80,24 @@ module Magento
       def delete_coupon(id)
         url = "#{api_resource}/#{id}/coupons"
         request.delete(url).parse
+      end
+
+      #
+      # Place order for cart
+      #
+      # Example:
+      #
+      #   Magento::Cart.order(
+      #     cartId: '12345',
+      #     paymentMethod: { method: 'cashondelivery' },
+      #     email: email
+      #   )
+      #
+      # @return String: return the order id
+      def order(attributes)
+        attributes.transform_keys(&:to_sym)
+        url = "#{api_resource}/#{attributes[:cartId]}/order"
+        request.put(url, attributes).parse
       end
     end
   end
