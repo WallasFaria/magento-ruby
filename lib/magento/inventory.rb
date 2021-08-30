@@ -35,6 +35,33 @@ module Magento
           "inventory/get-product-salable-quantity/#{sku}/#{stock_id}"
         ).parse
       end
+
+      # 
+      # ==== Example
+      #
+      #   Inventory.update_source_items(
+      #     [
+      #       {
+      #         "sku": "new_product1",
+      #         "source_code": "central",
+      #         "quantity": 1000,
+      #         "status": 1
+      #       },
+      #       {
+      #         "sku": "new_product1",
+      #         "source_code": "east",
+      #         "quantity": 2000,
+      #         "status": 1
+      #       }
+      #     ]
+      #   )
+      #   # => []
+      #
+      # @return Array
+      def update_source_items(source_items)
+        body = { sourceItems: source_items }
+        Request.new.post('inventory/source-items', body).parse
+      end
     end
   end
 end
