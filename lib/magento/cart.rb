@@ -6,6 +6,44 @@ module Magento
     self.primary_key = :id
 
     #
+    # Add a item to the current cart.
+    #
+    # Example:
+    #
+    #   cart = Magento::Cart.find(1)
+    #   cart.add_item({
+    #     sku: '123456',
+    #     qty: 1
+    #   })
+    #
+    # @return Magento::Item: Added item
+    def add_item(item_attributes)
+      attributes = { cartItem: item_attributes.merge(quote_id: id) }
+      item = self.class.add_item(id, attributes)
+      @items = @items.reject { |i| i.item_id == item.item_id} << item if @items
+      item
+    end
+
+    def delete_item(item_id)
+      self.class.delete_item(id, item_id)
+    end
+
+    def delete_items
+      self.class.delete_items(id)
+    end
+
+    def get_items
+      self.class.get_items(id)
+    end
+
+    def update_item(item_id, item_attributes)
+      attributes = { cartItem: item_attributes.merge(quote_id: id) }
+      item = self.class.update_item(id, item_id, attributes)
+      @items = @items.reject { |i| i.item_id == item.item_id} << item if @items
+      item
+    end
+
+    #
     # Add a coupon by code to the current cart.
     #
     # Example:
@@ -53,6 +91,48 @@ module Magento
     end
 
     class << self
+      #
+      # Example:
+      #
+      #   Magento::Cart.create({customer_id: 1})
+      #
+      # @return Magento::Cart: Cart object for customer
+      def create(attributes)
+        id = request.post("#{api_resource}/mine", attributes).parse
+        find id
+      end
+
+      def add_item(id, attributes)
+        url  = "#{api_resource}/#{id}/items"
+        hash = request.post(url, attributes).parse
+        Magento::ModelMapper.map_hash(Magento::Item, hash)
+      end
+
+      def delete_item(id, item_id)
+        url = "#{api_resource}/#{id}/items/#{item_id}"
+        request.delete(url).parse
+      end
+
+      def delete_items(id)
+        items = get_items(id)
+
+        items.each do |item|
+          delete_item(id, item.item_id)
+        end
+      end
+
+      def get_items(id)
+        url = "#{api_resource}/#{id}/items"
+        hash = request.get(url).parse
+        Magento::ModelMapper.map_array('Item', hash)
+      end
+
+      def update_item(id, item_id, attributes)
+        url = "#{api_resource}/#{id}/items/#{item_id}"
+        hash = request.put(url, attributes).parse
+        Magento::ModelMapper.map_hash(Magento::Item, hash)
+      end
+
       #
       # Add a coupon by code to a specified cart.
       #
