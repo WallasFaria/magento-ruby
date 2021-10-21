@@ -46,6 +46,8 @@ module Magento
     def inflector
       @inflector ||= Dry::Inflector.new do |inflections|
         inflections.singular 'children_data', 'category'
+        inflections.singular 'item_applied_taxes', 'item_applied_tax'
+        inflections.singular 'applied_taxes', 'applied_tax'
       end
     end
   end
