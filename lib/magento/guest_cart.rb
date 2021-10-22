@@ -12,9 +12,21 @@ module Magento
       item
     end
 
+    def delete_item(item_id, load_cart_info: false)
+      self.class.delete_item(cart_id, item_id, load_cart_info: load_cart_info)
+    end
+
+    def delete_items(load_cart_info: false)
+      self.class.delete_items(cart_id, load_cart_info: load_cart_info)
+    end
+
+    def get_items
+      self.class.get_items(cart_id)
+    end
+
     #
     # Set payment information to finish the order
-    # 
+    #
     # Example:
     # cart = Magento::GuestCart.find('gXsepZcgJbY8RCJXgGioKOO9iBCR20r7')
     #
@@ -62,7 +74,7 @@ module Magento
       end
 
       def find(id)
-        cart = build request.get("#{api_resource}/#{id}").parse.merge(cart_id: id)
+        build request.get("#{api_resource}/#{id}").parse.merge(cart_id: id)
       end
 
       #
@@ -88,7 +100,30 @@ module Magento
         Magento::ModelMapper.map_hash(Magento::Item, hash)
       end
 
-      # 
+      def delete_item(id, item_id, load_cart_info: false)
+        url = "#{api_resource}/#{id}/items/#{item_id}"
+        request.delete(url).parse
+
+        find(id) if load_cart_info
+      end
+
+      def delete_items(id, load_cart_info: false)
+        items = get_items(id)
+
+        items.each do |item|
+          delete_item(id, item.item_id)
+        end
+
+        find(id) if load_cart_info
+      end
+
+      def get_items(id)
+        url = "#{api_resource}/#{id}/items"
+        hash = request.get(url).parse
+        Magento::ModelMapper.map_array('Item', hash)
+      end
+
+      #
       # Add a coupon by code to a specified cart.
       #
       # Example
