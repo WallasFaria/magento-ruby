@@ -26,6 +26,8 @@ require_relative 'magento/sales_rule'
 require_relative 'magento/inventory'
 require_relative 'magento/import'
 require_relative 'magento/cart'
+require_relative 'magento/tax_rule'
+require_relative 'magento/tax_rate'
 
 require_relative 'magento/params/create_custom_attribute'
 require_relative 'magento/params/create_image'
