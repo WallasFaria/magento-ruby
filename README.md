@@ -55,6 +55,8 @@ Ruby library to consume the magento 2 api
 
 [Customer](#customer)
   - [Find by token](#get-customer-by-token)
+  - [Login](#customer-login)
+  - [Reset](#customer-reset-password)
 
 [Guest cart](#guest-cart)
   - [Payment information](#payment-information)
@@ -914,6 +916,20 @@ Magento::SalesRule.generate_coupon(
 ### Get customer by token
 ```rb
 Magento::Customer.find_by_token('user_token')
+```
+
+### Customer login
+```rb
+Magento::Customer.login('username', 'password')
+```
+
+### Customer reset password
+```rb
+Magento::Customer.reset_password(
+    email: 'user_email',
+    reset_token: 'user_reset_token',
+    new_password: 'user_new_password'
+  )
 ```
 
 ## Guest Cart
