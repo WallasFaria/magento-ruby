@@ -42,6 +42,22 @@ module Magento
         hash = request.get("customers/#{id}").parse
         build(hash)
       end
+
+      def login(username, password)
+        customer_hash = request.post("integration/customer/token", {
+          username: username, 
+          password: password
+        })
+      end
+
+      def reset_password(email, resetToken, newPassword)
+        request.post("customers/resetPassword", {
+            email: email,
+            resetToken: resetToken,
+            newPassword: newPassword
+        }).parse
+      end
+      
     end
   end
 end
