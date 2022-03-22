@@ -919,17 +919,23 @@ Magento::Customer.find_by_token('user_token')
 ```
 
 ### Customer login
+Exemple:
 ```rb
 Magento::Customer.login('username', 'password')
+
+>> 'aj8oer4eQi44FrghgfhVdbBKN' #return user token
 ```
 
 ### Customer reset password
+Exemple:
 ```rb
 Magento::Customer.reset_password(
     email: 'user_email',
     reset_token: 'user_reset_token',
     new_password: 'user_new_password'
   )
+
+>> true # return true on success
 ```
 
 ## Guest Cart
