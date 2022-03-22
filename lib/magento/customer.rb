@@ -50,14 +50,13 @@ module Magento
         })
       end
 
-      def reset_password(email, resetToken, newPassword)
+      def reset_password(email:, reset_token:, new_password:)
         request.post("customers/resetPassword", {
             email: email,
-            resetToken: resetToken,
-            newPassword: newPassword
+            reset_token: reset_token,
+            new_password: new_password
         }).parse
       end
-      
     end
   end
 end
