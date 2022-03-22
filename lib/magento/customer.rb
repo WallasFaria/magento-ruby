@@ -51,7 +51,7 @@ module Magento
       #
       # @return String: return the user token
       def login(username, password)
-        user_token = request.post("integration/customer/token", {
+        request.post("integration/customer/token", {
           username: username, 
           password: password
         })
