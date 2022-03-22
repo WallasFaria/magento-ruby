@@ -926,10 +926,10 @@ Magento::Customer.login('username', 'password')
 ### Customer reset password
 ```rb
 Magento::Customer.reset_password(
-    email: 'user_email',
-    reset_token: 'user_reset_token',
-    new_password: 'user_new_password'
-  )
+  email: 'user_email',
+  reset_token: 'user_reset_token',
+  new_password: 'user_new_password'
+)
 ```
 
 ## Guest Cart
