@@ -56,7 +56,7 @@ Ruby library to consume the magento 2 api
 [Customer](#customer)
   - [Find by token](#get-customer-by-token)
   - [Login](#customer-login)
-  - [Reset](#customer-reset-password)
+  - [Reset Password](#customer-reset-password)
 
 [Guest cart](#guest-cart)
   - [Payment information](#payment-information)
