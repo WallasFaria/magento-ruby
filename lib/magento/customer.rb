@@ -42,6 +42,39 @@ module Magento
         hash = request.get("customers/#{id}").parse
         build(hash)
       end
+
+      #
+      # Log in to a user account
+      #
+      #   Example:
+      #   Magento::Customer.login('customer@gmail.com', '123456')
+      #
+      # @return String: return the user token
+      def login(username, password)
+        request.post("integration/customer/token", {
+          username: username, 
+          password: password
+        })
+      end
+
+      #
+      # Reset a user's password
+      #
+      #   Example:
+      #   Magento::Customer.reset_password(
+      #     email: 'customer@gmail.com', 
+      #     reset_token: 'mEKMTciuhPfWkQ3zHTCLIJNC',
+      #     new_password: '123456'
+      #   )
+      #
+      # @return Bolean: true on success, raise exception otherwise
+      def reset_password(email:, reset_token:, new_password:)
+        request.post("customers/resetPassword", {
+            email: email,
+            reset_token: reset_token,
+            new_password: new_password
+        }).parse
+      end
     end
   end
 end
