@@ -1,3 +1,3 @@
-module Magento
-  VERSION = '0.32.1'
-end
+module Magento
+  VERSION = '0.33.0'
+end
