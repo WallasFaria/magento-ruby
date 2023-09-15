@@ -69,6 +69,10 @@ module Magento
       self.class.delete_coupon(id)
     end
 
+    def shipping_information(shipping_address:, billing_address:)
+      self.class.shipping_information(id, shipping_address: shipping_address, billing_address: billing_address)
+    end
+
     #
     # Place order for cart
     #
@@ -160,6 +164,17 @@ module Magento
       def delete_coupon(id)
         url = "#{api_resource}/#{id}/coupons"
         request.delete(url).parse
+      end
+
+      def shipping_information(id, shipping_address:, billing_address:)
+        url = "#{api_resource}/#{id}/shipping-information"
+        attributes = {
+          addressInformation: {
+            shipping_address: shipping_address,
+            billing_address: billing_address
+          }
+        }
+        request.post(url, attributes).parse
       end
 
       #
