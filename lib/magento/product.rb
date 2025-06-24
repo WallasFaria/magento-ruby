@@ -77,7 +77,7 @@ module Magento
 
     # Add {price} on product {sku} for specified {customer_group_id}
     # 
-    # Param {quantity} is the minimun amount to apply the price
+    # Param {quantity} is the minimum amount to apply the price
     # 
     # product = Magento::Product.find(1)
     # product.add_tier_price(3.99, quantity: 1, customer_group_id: :all)
@@ -178,7 +178,7 @@ module Magento
 
       # Add {price} on product {sku} for specified {customer_group_id}
       # 
-      # Param {quantity} is the minimun amount to apply the price
+      # Param {quantity} is the minimum amount to apply the price
       # 
       # @return {Boolean}
       def add_tier_price(sku, price, quantity:, customer_group_id: :all)
