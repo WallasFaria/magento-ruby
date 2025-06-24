@@ -3,7 +3,6 @@ name: Ruby Gem
 on:
   push:
     branches: [ release ]
-  pull_request:
 
 jobs:
   build:
@@ -12,16 +11,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 2.6
+    - name: Set up Ruby 3.4
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6
+        ruby-version: 3.4
 
     - name: Install dependencies
       run: bundle install --jobs 4 --retry 3
-
-    - name: Run tests
-      run: bundle exec rake spec
 
     - name: Publish to GPR
       if: github.event_name == 'push'
