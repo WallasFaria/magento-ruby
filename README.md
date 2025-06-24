@@ -568,11 +568,11 @@ Example:
 ```rb
 product = Magento::Product.find('sku')
 
-product.add_media(madia_id)
+product.add_media(media_id)
 
 # or through the class method
 
-Magento::Product.add_media('sku', madia_id)
+Magento::Product.add_media('sku', media_id)
 ```
 
 ### Add tier price to product
