@@ -190,7 +190,7 @@ module Magento
       #
       # @return String: return the order id
       def order(attributes)
-        attributes.transform_keys(&:to_sym)
+        attributes = attributes.transform_keys(&:to_sym)
         url = "#{api_resource}/#{attributes[:cartId]}/order"
         request.put(url, attributes).parse
       end

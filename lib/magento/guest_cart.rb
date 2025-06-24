@@ -89,7 +89,7 @@ module Magento
       #
       # @return String: return the order id
       def payment_information(attributes)
-        attributes.transform_keys(&:to_sym)
+        attributes = attributes.transform_keys(&:to_sym)
         url = "#{api_resource}/#{attributes[:cartId]}/payment-information"
         request.post(url, attributes).parse
       end
