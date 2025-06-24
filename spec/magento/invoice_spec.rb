@@ -34,9 +34,9 @@ RSpec.describe Magento::Invoice do
     let(:response) { double('Response', parse: 1) }
 
     describe 'class method' do
-      it 'sends POST to /invoices/:id/refund' do
+      it 'sends POST to /invoice/:id/refund' do
         expect(magento_client).to receive(:post)
-          .with("invoices/#{invoice_id}/refund", nil)
+          .with("invoice/#{invoice_id}/refund", nil)
           .and_return(response)
 
         Magento::Invoice.refund(invoice_id)
