@@ -125,7 +125,7 @@ module Magento
       #
       # @return {Integer} return the refund id
       def refund(invoice_id, refund_params=nil)
-        request.post("invoices/#{invoice_id}/refund", refund_params).parse
+        request.post("invoice/#{invoice_id}/refund", refund_params).parse
       end
     end
   end
