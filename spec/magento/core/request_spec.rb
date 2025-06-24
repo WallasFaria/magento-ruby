@@ -47,6 +47,16 @@ RSpec.describe Magento::Request do
 
       subject.post('products', body)
     end
+
+    it 'calls HTTP.post with the full url when url_completa is true' do
+      body = { product: { name: 'Some name', price: 22.50 } }
+
+      expect_any_instance_of(HTTP::Client).to receive(:post)
+        .with('https://full.url', { json: body })
+        .and_return(response)
+
+      subject.post('https://full.url', body, true)
+    end
   end
 
   describe '#delete' do
