@@ -788,7 +788,7 @@ Magento::Order.add_comment(
 
 Example:
 ```rb
-Magento::Invoice.invoice(invoice_id)
+Magento::Invoice.refund(invoice_id)
 >> 12 # return refund id
 
 # or from instance

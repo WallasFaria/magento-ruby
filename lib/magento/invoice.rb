@@ -64,7 +64,7 @@ module Magento
       #
       # @return {Boolean}
       def void(invoice_id)
-        request.post("invoices/#{invoice_id}/avoid").parse
+        request.post("invoices/#{invoice_id}/void").parse
       end
 
       #
