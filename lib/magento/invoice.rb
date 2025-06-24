@@ -64,7 +64,7 @@ module Magento
       #
       # @return {Boolean}
       def void(invoice_id)
-        request.post("invoices/#{invoice_id}/avoid").parse
+        request.post("invoices/#{invoice_id}/void").parse
       end
 
       #
@@ -125,7 +125,7 @@ module Magento
       #
       # @return {Integer} return the refund id
       def refund(invoice_id, refund_params=nil)
-        request.post("invoice/#{invoice_id}/refund", refund_params).parse
+        request.post("invoices/#{invoice_id}/refund", refund_params).parse
       end
     end
   end
