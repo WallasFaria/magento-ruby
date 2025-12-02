@@ -152,56 +152,153 @@ RSpec.describe Magento::Query do
   end
 
   describe '#all' do
-    it 'is pending'
+    it 'requests the resource and returns a RecordCollection' do
+      request = instance_double(Magento::Request)
+      allow(subject).to receive(:request).and_return(request)
+      response = double('Response', parse: {
+                          'items' => [{ 'id' => 1 }],
+                          'search_criteria' => { 'current_page' => 1, 'page_size' => 50 },
+                          'total_count' => 1
+                        })
+      expect(request).to receive(:get)
+        .with('fakers?searchCriteria[currentPage]=1&searchCriteria[pageSize]=50')
+        .and_return(response)
+
+      records = subject.all
+      expect(records).to be_a(Magento::RecordCollection)
+      expect(records.first).to be_a(Magento::Faker)
+    end
   end
 
   describe '#first' do
-    it 'is pending'
+    it 'returns the first record' do
+      request = instance_double(Magento::Request)
+      allow(subject).to receive(:request).and_return(request)
+      response = double('Response', parse: {
+                          'items' => [{ 'id' => 1 }],
+                          'search_criteria' => { 'current_page' => 1, 'page_size' => 1 },
+                          'total_count' => 1
+                        })
+      expect(request).to receive(:get)
+        .with('fakers?searchCriteria[currentPage]=1&searchCriteria[pageSize]=1')
+        .and_return(response)
+
+      expect(subject.first).to be_a(Magento::Faker)
+    end
   end
 
   describe '#find_by' do
-    it 'is pending'
+    it 'builds query using where and returns first' do
+      expect(subject).to receive(:where).with({ name: 'foo' }).and_return(subject)
+      expect(subject).to receive(:first).and_return(:record)
+      expect(subject.find_by(name: 'foo')).to eq(:record)
+    end
   end
 
   describe '#count' do
-    it 'is pending'
+    it 'uses select and returns total_count' do
+      expect(subject).to receive(:select).with(:id).and_return(subject)
+      expect(subject).to receive(:page_size).with(1).and_return(subject)
+      expect(subject).to receive(:page).with(1).and_return(subject)
+      expect(subject).to receive(:all).and_return(double(total_count: 5))
+      expect(subject.count).to eq(5)
+    end
   end
 
   describe '#find_each' do
-    it 'is pending'
+    it 'loops through pages yielding records' do
+      page1 = Magento::RecordCollection.new(
+        items: [1, 2],
+        total_count: 5,
+        search_criteria: Magento::SearchCriterium.build('current_page' => 1, 'page_size' => 2)
+      )
+      page2 = Magento::RecordCollection.new(
+        items: [3, 4],
+        total_count: 5,
+        search_criteria: Magento::SearchCriterium.build('current_page' => 2, 'page_size' => 2)
+      )
+      page3 = Magento::RecordCollection.new(
+        items: [5],
+        total_count: 5,
+        search_criteria: Magento::SearchCriterium.build('current_page' => 3, 'page_size' => 2)
+      )
+      allow(subject).to receive(:all).and_return(page1, page2, page3)
+      items = []
+      subject.find_each { |i| items << i }
+      expect(items).to eq([1, 2, 3, 4, 5])
+    end
+
+    it 'raises when model is Magento::Category' do
+      query = Magento::Query.new(Magento::Category)
+      expect { query.find_each { |_| } }.to raise_error(NoMethodError)
+    end
   end
 
   describe 'private mathods' do
     describe 'endpoint' do
-      it 'is pending'
+      it 'returns the endpoint passed in initializer' do
+        q = Magento::Query.new(Magento::Faker, api_resource: 'custom')
+        expect(q.send(:endpoint)).to eq('custom')
+      end
     end
 
     describe 'verify_id' do
-      it 'is pending'
+      it 'replaces id with primary_key when different' do
+        class CustomModel < Magento::Model; end
+        CustomModel.send(:primary_key=, :entity_id)
+        q = Magento::Query.new(CustomModel)
+        expect(q.send(:verify_id, :id)).to eq(:entity_id)
+        expect(q.send(:verify_id, :name)).to eq(:name)
+      end
     end
 
     describe 'query_params' do
-      it 'is pending'
+      it 'returns encoded params from query state' do
+        subject.where(name_like: 'John')
+        subject.page(2)
+        subject.page_size(10)
+        subject.select(:id)
+        subject.order(name: :desc)
+        expected = 'searchCriteria[filterGroups][0][filters][0][field]=name&searchCriteria[filterGroups][0][filters][0][conditionType]=like&searchCriteria[filterGroups][0][filters][0][value]=John&searchCriteria[currentPage]=2&searchCriteria[sortOrders][0][field]=name&searchCriteria[sortOrders][0][direction]=desc&searchCriteria[pageSize]=10&fields=items%5Bid%5D%2Csearch_criteria%2Ctotal_count'
+        expect(subject.send(:query_params)).to eq(expected)
+      end
     end
 
     describe 'parse_filter' do
-      it 'is pending'
+      it 'splits field and condition' do
+        expect(subject.send(:parse_filter, :price_gt)).to eq(%w[price gt])
+        expect(subject.send(:parse_filter, :price)).to eq([:price, 'eq'])
+      end
     end
 
     describe 'parse_value_filter' do
-      it 'is pending'
+      it 'joins array when condition is in or nin' do
+        expect(subject.send(:parse_value_filter, 'in', [1, 2])).to eq('1,2')
+        expect(subject.send(:parse_value_filter, 'eq', [1, 2])).to eq([1, 2])
+      end
     end
 
     describe 'parse_field' do
-      it 'is pending'
+      it 'formats nested fields' do
+        expect(subject.send(:parse_field, :id, root: true)).to eq(:id)
+        expect(subject.send(:parse_field, { nested: :name })).to eq('nested[name]')
+        expect(subject.send(:parse_field, { nested: [:id, :name] })).to eq('nested[id,name]')
+      end
     end
 
     describe 'encode' do
-      it 'is pending'
+      it 'encodes hash params' do
+        expected = 'a[b][c]=1&a[b][d]=2&arr[0]=1&arr[1]=2'
+        result = subject.send(:encode, a: { b: { c: 1, d: 2 } }, arr: [1, 2])
+        expect(result).to eq(expected)
+      end
     end
 
     describe 'append_key' do
-      it 'is pending'
+      it do
+        expect(subject.send(:append_key, nil, 'key')).to eq('key')
+        expect(subject.send(:append_key, 'root', 'key')).to eq('root[key]')
+      end
     end
   end
 end
